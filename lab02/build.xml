@@ -1,4 +1,4 @@
-<project name="lab01" default="compile" basedir=".">
+<project name="lab02" default="compile" basedir=".">
 	<property name="src" location="src" />
 	<property name="classes" location="classes" />
 
@@ -16,7 +16,7 @@
 	</target>
 
 	<target name="run" depends="compile">
-		<java classname="ap.labs.Program" classpath="classes" fork="false" spawn="false">
+		<java classname="pt.ist.ap.labs.Program" classpath="classes" fork="false" spawn="false">
 		</java>
 	</target>
 </project>

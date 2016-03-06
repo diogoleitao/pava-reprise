@@ -1,4 +1,4 @@
-package ap.labs;
+package pt.ist.ap.labs;
 
 public class Command {
 

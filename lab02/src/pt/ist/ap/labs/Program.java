@@ -1,4 +1,4 @@
-package ap.labs;
+package pt.ist.ap.labs;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class Program {
-
 	public static String lastClassUsed = "";
 	public static Object lastInstanceUsed = null;
 	public static HashMap<String, Object> variables = new HashMap<String, Object>();
@@ -17,6 +16,7 @@ public class Program {
 
 			Scanner sc = new Scanner(System.in);
 			String[] command = sc.nextLine().split(" ");
+			sc.close();
 
 			if (command[0].equals("Class")) {
 				try {
