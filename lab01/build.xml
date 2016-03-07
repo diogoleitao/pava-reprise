@@ -3,21 +3,20 @@
 	<property name="classes" location="classes" />
 
 	<target name="init">
-		<mkdir dir="${classes}"/>
-		<mkdir dir="classes"/>
+		<mkdir dir="${classes}" />
 	</target>
 
 	<target name="clean">
-		<delete dir="classes" />
+		<delete dir="${classes}" />
 	</target>
 
 	<target name="compile" depends="clean, init">
-		<javac includeantruntime="false" srcdir="src" destdir="classes" />
+		<javac includeantruntime="false" srcdir="${src}" destdir="${classes}" />
 	</target>
 
 	<target name="run" depends="compile">
-		<java classname="pt.ist.ap.labs.Program" classpath="classes" fork="false" spawn="false">
-			<arg value="${arg0}"/>
+		<java classname="pt.ist.ap.labs.Program" classpath="${classes}" fork="false" spawn="false">
+			<arg value="${arg0}" />
 		</java>
 	</target>
 </project>
