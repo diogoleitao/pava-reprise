@@ -4,16 +4,14 @@ public class Get implements Command {
 
 	@Override
 	public void execute() {
-		if (Program.variables.isEmpty())
+		if (Shell.variables.isEmpty())
 			System.out.println("No instances stored.");
 		else {
-			Program.lastInstanceUsed = Program.variables.get(Program.command[1]);
-			if (Program.lastInstanceUsed == null)
-				System.out.println("No object stored with name '" + Program.command[1] + "'.");
-			else {
-				Program.lastClassUsed = Program.lastInstanceUsed.getClass().toGenericString();
-				System.out.println(Program.lastInstanceUsed.getClass());
-			}
+			Shell.lastResult = Shell.variables.get(Shell.command[1]);
+			if (Shell.lastResult == null)
+				System.out.println("No class stored with name '" + Shell.command[1] + "'.");
+			else
+				Shell.printResult();
 		}
 	}
 }

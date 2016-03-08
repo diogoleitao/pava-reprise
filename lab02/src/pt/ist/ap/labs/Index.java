@@ -4,9 +4,10 @@ public class Index implements Command {
 
 	@Override
 	public void execute() {
-		if (Program.lastInstanceUsed.getClass().isArray()) {
-			Object[] array = (Object[]) Program.lastInstanceUsed;
-			Program.lastInstanceUsed = array[Integer.parseInt(Program.command[1])];
+		if (Shell.lastResult.getClass().isArray()) {
+			Shell.arrayResult = (Object[]) Shell.lastResult;
+			Shell.lastResult = Shell.arrayResult[Integer.parseInt(Shell.command[1])];
+			Shell.printResult();
 		} else
 			System.out.println("Current object is not an array.");
 	}
