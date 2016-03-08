@@ -30,12 +30,12 @@ public class Shell {
 				System.out.println("Trying generic command: " + command[0]);
 				try {
 					if (command.length > 1) {
-						currentMethod = lastResult.getClass().getDeclaredMethod(command[0], ((Object) command[1]).getClass());
+						currentMethod = lastResult.getClass().getMethod(command[0], ((Object) command[1]).getClass());
 						lastResult = currentMethod.invoke(lastResult, (Object) command[1]);
 						printResult();
 					}
 					else {
-						currentMethod = lastResult.getClass().getDeclaredMethod(command[0], (java.lang.Class<?>[]) null);
+						currentMethod = lastResult.getClass().getMethod(command[0], (java.lang.Class<?>[]) null);
 						lastResult = currentMethod.invoke(lastResult);
 						printResult();
 					}

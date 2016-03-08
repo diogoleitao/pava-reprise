@@ -15,7 +15,7 @@
 	</target>
 
 	<target name="run" depends="compile">
-		<java classname="pt.ist.ap.labs.Program" classpath="${classes}" fork="false" spawn="false">
+		<java classname="pt.ist.ap.labs.Shell" classpath="${classes}" fork="false" spawn="false">
 		</java>
 	</target>
 </project>
