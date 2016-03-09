@@ -1,5 +1,6 @@
 package pt.ist.ap.labs;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -30,11 +31,20 @@ public class Shell {
 				System.out.println("Trying generic command: " + command[0]);
 				try {
 					if (command.length > 1) {
-						currentMethod = lastResult.getClass().getMethod(command[0], ((Object) command[1]).getClass());
-						lastResult = currentMethod.invoke(lastResult, (Object) command[1]);
+						Object[] parsedObject = new Object[] { command[2] };						
+						java.lang.Class<?>[] arguments = new java.lang.Class<?>[] { null };
+
+						if (command[1].equals("int"))
+							arguments = new java.lang.Class<?> [] { int.class };
+						else if (command[1].equals("String"))
+							arguments = new java.lang.Class<?> [] { String.class };
+						else
+							arguments = new java.lang.Class<?> [] { Object.class };
+
+						currentMethod = lastResult.getClass().getMethod(command[0], arguments);
+						lastResult = currentMethod.invoke(lastResult, parsedObject);
 						printResult();
-					}
-					else {
+					} else {
 						currentMethod = lastResult.getClass().getMethod(command[0], (java.lang.Class<?>[]) null);
 						lastResult = currentMethod.invoke(lastResult);
 						printResult();
