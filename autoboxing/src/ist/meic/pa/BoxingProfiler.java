@@ -49,7 +49,7 @@ public class BoxingProfiler {
 				return;
 			}
 		} catch (NotFoundException e) {
-			System.err.println("Classpath to be inserted in pool not found. Terminating...");
+			System.err.println("Classpath to be added to ClassPool not found. Terminating...");
 			return;
 		}
 	}

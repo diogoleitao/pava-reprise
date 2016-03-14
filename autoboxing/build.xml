@@ -1,0 +1,37 @@
+<project name="BoxingProfiler" basedir="." default="compile">
+	<property name="src" location="src" />
+	<property name="classes" location="classes" />
+	<property name="jar" location="boxingProfiler.jar" />
+
+	<path id="project-classpath">
+		<fileset dir="." includes="javassist.jar" />
+	</path>
+
+	<target name="init" description="Creates the 'build' folder.">
+		<mkdir dir="${classes}" />
+	</target>
+
+	<target name="clean" description="Deletes the 'classes' folder and the generated boxingProfiler.jar.">
+		<delete dir="${classes}" />
+		<delete file="${jar}" />
+	</target>
+
+	<target name="compile" depends="clean, init" description="Creates the boxingProfiler.jar.">
+		<javac includeantruntime="false" srcdir="${src}" destdir="${classes}" classpathref="project-classpath" />
+		<jar destfile="${jar}" basedir="${classes}">
+			<manifest>
+				<attribute name="Main-Class" value="ist.meic.pa.BoxingProfiler" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="run" depends="compile" description="Runs BoxingProfiler with the class SumIntegers">
+		<java classname="ist.meic.pa.BoxingProfiler" fork="false" spawn="false">
+			<classpath>
+				<path refid="project-classpath" />
+				<path location="${jar}" />
+			</classpath>
+			<arg value="test.SumIntegers" />
+		</java>
+	</target>
+</project>
