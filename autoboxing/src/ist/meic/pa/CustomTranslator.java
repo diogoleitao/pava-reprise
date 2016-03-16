@@ -4,12 +4,10 @@ import java.lang.reflect.Modifier;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
-import javassist.CodeConverter;
 import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 import javassist.Translator;
-import javassist.runtime.Cflow;
 
 public class CustomTranslator implements Translator {
 
@@ -34,26 +32,20 @@ public class CustomTranslator implements Translator {
 	}
 
 	private void instrumentClass(CtClass ctClass) throws CannotCompileException {
-		for (CtMethod method : ctClass.getMethods()) {
-			Cflow cflow = new Cflow();
-			method.useCflow("valueOf");
-			//CodeConverter converter = new CodeConverter();
-			//converter.replaceNew(ctClass, null);
-			System.out.println(cflow.value());
-
+		for (CtMethod method : ctClass.getDeclaredMethods()) {
 			final String boxingTemplate =
-					"{"
-							+ "ist.meic.pa.BoxingProfiler.addBoxingMethod(" +
+					"{" +
+							"ist.meic.pa.BoxingProfiler.addBoxingMethod(" +
 							method.getLongName() + ", " +
-							ctClass.getName() + ");"
-					+ "}";
+							ctClass.getName() + ");" +
+					"}";
 
-			final String uboxingTemplate =
-					"{"
-							+ "ist.meic.pa.BoxingProfiler.addUnboxingMethod(" +
+			final String unboxingTemplate =
+					"{" +
+							"ist.meic.pa.BoxingProfiler.addUnboxingMethod(" +
 							method.getLongName() + ", " +
-							ctClass.getName() + ");"
-					+ "}";
+							ctClass.getName() + ");" +
+					"}";
 		}
 	}
 }

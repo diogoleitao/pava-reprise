@@ -30,7 +30,7 @@ public class Storage {
 	}
 
 	public void printOutput() {
-		//String print = ctMethod.getLongName() + operation + ctClass.getName(); 
-		//System.err.println(print);
+		final String output = "";
+		System.err.println(output);
 	}
 }

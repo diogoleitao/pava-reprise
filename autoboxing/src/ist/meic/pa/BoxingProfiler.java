@@ -35,6 +35,8 @@ public class BoxingProfiler {
 					try {
 						Object instance = runnableClass.newInstance();
 						instance.getClass().getMethod("main", new Class[] { String[].class }).invoke(null, new Object[] { newArgs });
+						
+						storage.printOutput();
 					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | NoSuchMethodException e) {
 						System.err.println("Main method could not be invoked from " + args[0] + " class with " + ((newArgs.length == 0) ? "no arguments" : "arguments " + newArgs.toString()) +  ". Terminating...");
 						return;
