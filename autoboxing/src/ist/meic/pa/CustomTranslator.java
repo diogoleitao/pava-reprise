@@ -8,11 +8,14 @@ import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 import javassist.Translator;
+import javassist.expr.ExprEditor;
+import javassist.expr.MethodCall;
 
 public class CustomTranslator implements Translator {
 
 	@Override
-	public void start(ClassPool pool) throws NotFoundException, CannotCompileException {}
+	public void start(ClassPool pool) throws NotFoundException, CannotCompileException {
+	}
 
 	@Override
 	public void onLoad(ClassPool pool, String ctClass) throws NotFoundException, CannotCompileException {
@@ -33,19 +36,28 @@ public class CustomTranslator implements Translator {
 
 	private void instrumentClass(CtClass ctClass) throws CannotCompileException {
 		for (CtMethod method : ctClass.getDeclaredMethods()) {
-			final String boxingTemplate =
-					"{" +
-							"ist.meic.pa.BoxingProfiler.addBoxingMethod(" +
-							method.getLongName() + ", " +
-							ctClass.getName() + ");" +
-					"}";
+			method.instrument(new ExprEditor() {
+				@Override
+				public void edit(MethodCall methodCall) {
+					try {
+						String methodName = methodCall.getMethodName();
+						CtClass[] parameterTypes = methodCall.getMethod().getParameterTypes();
+						String parameterClassName = parameterTypes[0].toClass().getName();
 
-			final String unboxingTemplate =
-					"{" +
-							"ist.meic.pa.BoxingProfiler.addUnboxingMethod(" +
-							method.getLongName() + ", " +
-							ctClass.getName() + ");" +
-					"}";
+						if (methodName.contains("valueOf")) {
+							Storage.addBoxingMethod(methodName, parameterClassName);
+							System.err.println(methodName + " " + parameterClassName);
+						} else if (methodName.contains("Value")) {
+							Storage.addUnboxingMethod(methodName, parameterClassName);
+							System.err.println(methodName + " " + parameterClassName);
+						}
+
+					} catch (NotFoundException | CannotCompileException e) {
+						// TODO: deal with the exceptions properly
+						e.printStackTrace();
+					}
+				}
+			});
 		}
 	}
 }
