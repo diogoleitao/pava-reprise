@@ -9,6 +9,7 @@ import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 import javassist.Translator;
+import javassist.runtime.Cflow;
 
 public class CustomTranslator implements Translator {
 
@@ -34,10 +35,25 @@ public class CustomTranslator implements Translator {
 
 	private void instrumentClass(CtClass ctClass) throws CannotCompileException {
 		for (CtMethod method : ctClass.getMethods()) {
-			CodeConverter converter = new CodeConverter();
-			converter.replaceNew(ctClass, null);
-			final String boxingTemplate = "ist.meic.pa.BoxingProfiler.addBoxingMethod(" + method.getLongName() + ");";
-			final String uboxingTemplate = "ist.meic.pa.BoxingProfiler.addUnboxingMethod(" + method.getLongName() + ");";
+			Cflow cflow = new Cflow();
+			method.useCflow("valueOf");
+			//CodeConverter converter = new CodeConverter();
+			//converter.replaceNew(ctClass, null);
+			System.out.println(cflow.value());
+
+			final String boxingTemplate =
+					"{"
+							+ "ist.meic.pa.BoxingProfiler.addBoxingMethod(" +
+							method.getLongName() + ", " +
+							ctClass.getName() + ");"
+					+ "}";
+
+			final String uboxingTemplate =
+					"{"
+							+ "ist.meic.pa.BoxingProfiler.addUnboxingMethod(" +
+							method.getLongName() + ", " +
+							ctClass.getName() + ");"
+					+ "}";
 		}
 	}
 }
