@@ -27,7 +27,7 @@ public class CustomTranslator implements Translator {
 		if (!javassist && !profiler) {
 			try {
 				instrumentClass(cc);
-			} catch (Throwable e) {
+			} catch (CannotCompileException e) {
 				System.err.println("Error while instrumenting class " + ctClass);
 			}
 		}
