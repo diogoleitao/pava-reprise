@@ -4,11 +4,11 @@ import java.lang.reflect.Modifier;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
+import javassist.CodeConverter;
 import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 import javassist.Translator;
-import javassist.expr.ExprEditor;
 
 public class CustomTranslator implements Translator {
 
@@ -34,13 +34,10 @@ public class CustomTranslator implements Translator {
 
 	private void instrumentClass(CtClass ctClass) throws CannotCompileException {
 		for (CtMethod method : ctClass.getMethods()) {
-			method.instrument(new ExprEditor() {
-				// TODO: detect boxing
-				final String methodTemplate = "ist.meic.pa.BoxingProfiler.addBoxingMethod(" + method.getLongName() + ");";
-				
-				// TODO: detect unboxing
-				final String methodTemplate2 = "ist.meic.pa.BoxingProfiler.addUnboxingMethod(" + method.getLongName() + ");";
-			});
+			CodeConverter converter = new CodeConverter();
+			converter.replaceNew(ctClass, null);
+			final String boxingTemplate = "ist.meic.pa.BoxingProfiler.addBoxingMethod(" + method.getLongName() + ");";
+			final String uboxingTemplate = "ist.meic.pa.BoxingProfiler.addUnboxingMethod(" + method.getLongName() + ");";
 		}
 	}
 }
