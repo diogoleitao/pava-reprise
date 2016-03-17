@@ -8,8 +8,16 @@ import javassist.Loader;
 import javassist.NotFoundException;
 import javassist.Translator;
 
+/**
+ * The Class BoxingProfiler.
+ */
 public class BoxingProfiler {
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		// SETUP OBJECTS
 		Translator translator = new CustomTranslator();
@@ -34,11 +42,13 @@ public class BoxingProfiler {
 					try {
 						Object instance = runnableClass.newInstance();
 						instance.getClass().getMethod("main", new Class[] { String[].class }).invoke(null, new Object[] { newArgs });
+						Storage.printOutput();
 					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | NoSuchMethodException e) {
 						System.err.println("Main method could not be invoked from " + args[0] + " class with " + ((newArgs.length == 0) ? "no arguments" : "arguments " + newArgs.toString()) +  ".");
 						return;
 					} catch (InvocationTargetException e) {
 						System.err.println(e.getTargetException());
+						return;
 					}
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
