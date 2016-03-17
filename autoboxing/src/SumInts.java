@@ -1,4 +1,3 @@
-package test;
 
 public class SumInts {
 	private static long sumOfIntegerUptoN(int n) {

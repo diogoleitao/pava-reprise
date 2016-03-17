@@ -35,21 +35,22 @@ public class BoxingProfiler {
 						Object instance = runnableClass.newInstance();
 						instance.getClass().getMethod("main", new Class[] { String[].class }).invoke(null, new Object[] { newArgs });
 					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | NoSuchMethodException e) {
-						System.err.println("Main method could not be invoked from " + args[0] + " class with " + ((newArgs.length == 0) ? "no arguments" : "arguments " + newArgs.toString()) +  ". Terminating...");
+						System.err.println("Main method could not be invoked from " + args[0] + " class with " + ((newArgs.length == 0) ? "no arguments" : "arguments " + newArgs.toString()) +  ".");
 						return;
 					} catch (InvocationTargetException e) {
 						System.err.println(e.getTargetException());
 					}
 				} catch (ClassNotFoundException e) {
-					System.err.println("Class " + args[0] + " not found. Terminating...");
+					e.printStackTrace();
+					System.err.println("Class " + args[0] + " not found.");
 					return;
 				}
 			} catch (CannotCompileException e) {
-				System.err.println("Cannot compile instrumented classes, check the templates on the custom Translator. Terminating...");
+				System.err.println("Cannot compile instrumented classes.");
 				return;
 			}
 		} catch (NotFoundException e) {
-			System.err.println("Classpath to be added to ClassPool not found. Terminating...");
+			System.err.println("Classpath to be added to ClassPool not found.");
 			return;
 		}
 	}

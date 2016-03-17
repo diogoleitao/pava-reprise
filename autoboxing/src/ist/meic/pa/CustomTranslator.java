@@ -29,12 +29,12 @@ public class CustomTranslator implements Translator {
 			try {
 				instrumentClass(cc);
 			} catch (CannotCompileException e) {
-				System.err.println("Error while instrumenting class " + ctClass);
+				throw new CannotCompileException(e);
 			}
 		}
 	}
 
-	private void instrumentClass(CtClass ctClass) throws CannotCompileException {
+	private void instrumentClass(final CtClass ctClass) throws CannotCompileException {
 		for (CtMethod method : ctClass.getDeclaredMethods()) {
 			method.instrument(new ExprEditor() {
 				@Override
@@ -42,22 +42,26 @@ public class CustomTranslator implements Translator {
 					try {
 						String methodName = methodCall.getMethodName();
 						CtClass[] parameterTypes = methodCall.getMethod().getParameterTypes();
-						String parameterClassName = parameterTypes[0].toClass().getName();
+						String parameterClassName = "";
+						if (parameterTypes.length > 0)
+							parameterClassName = getWrapperType(parameterTypes[0].getName());
 
 						if (methodName.contains("valueOf")) {
 							Storage.addBoxingMethod(methodName, parameterClassName);
-							System.err.println(methodName + " " + parameterClassName);
+							//System.err.println(methodName + " " + parameterClassName);
 						} else if (methodName.contains("Value")) {
 							Storage.addUnboxingMethod(methodName, parameterClassName);
-							System.err.println(methodName + " " + parameterClassName);
+							//System.err.println(methodName + " " + parameterClassName);
 						}
-
-					} catch (NotFoundException | CannotCompileException e) {
-						// TODO: deal with the exceptions properly
-						e.printStackTrace();
+					} catch (NotFoundException e) {
+						throw new RuntimeException(e);
 					}
 				}
 			});
 		}
+	}
+
+	private String getWrapperType(String primitiveType) {
+		return "";
 	}
 }
