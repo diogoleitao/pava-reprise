@@ -11,9 +11,6 @@ import javassist.Translator;
 import javassist.expr.ExprEditor;
 import javassist.expr.MethodCall;
 
-/**
- * The Class CustomTranslator.
- */
 public class CustomTranslator implements Translator {
 
 	@Override
@@ -37,14 +34,8 @@ public class CustomTranslator implements Translator {
 		}
 	}
 
-	/**
-	 * Instrument class.
-	 *
-	 * @param ctClass the ct class
-	 * @throws CannotCompileException the cannot compile exception
-	 */
 	private void instrumentClass(final CtClass ctClass) throws CannotCompileException {
-		for (CtMethod method : ctClass.getDeclaredMethods()) {
+		for (final CtMethod method : ctClass.getDeclaredMethods()) {
 			final String methodName = method.getLongName();
 
 			method.instrument(new ExprEditor() {
@@ -55,21 +46,26 @@ public class CustomTranslator implements Translator {
 						String parameterClassName = "";
 						String codeTemplate = "";
 						String autoboxingMethodName = methodCall.getMethod().getLongName();
+						String incompleteKey = methodName + Storage.getInstance().SEPARATOR;
+						String boxed = " boxed ";
+						String unboxed = " unboxed ";
 
 						if (autoboxingMethodName.contains("valueOf")) {
-							codeTemplate = "{ist.meic.pa.Storage.updateBoxingCounter(\"%s\");}";
-							methodCall.getMethod().insertBefore(String.format(codeTemplate, methodName));
-
 							parameterClassName = getWrapperType(parameterTypes[0].getName());
-							Storage.addBoxingMethod(methodName, parameterClassName);
-						} else if (autoboxingMethodName.contains("Value")) {
-							codeTemplate = "{ist.meic.pa.Storage.updateUnboxingCounter(\"%s\");}";
-							methodCall.getMethod().insertBefore(String.format(codeTemplate, methodName));
+							incompleteKey += parameterClassName + Storage.getInstance().SEPARATOR;
+							Storage.getInstance().addAutoboxingMethod(incompleteKey + boxed);
 
+							codeTemplate = "{ist.meic.pa.Storage.getInstance().updateAutoboxingCounter(\"%s\");}";
+							method.insertAfter(String.format(codeTemplate, incompleteKey + boxed));
+
+						} else if (autoboxingMethodName.contains("Value")) {
 							String methodCallName = methodCall.getMethodName();
 							parameterClassName = getWrapperType(methodCallName.substring(0, methodCallName.indexOf("Value")));
+							incompleteKey += parameterClassName + Storage.getInstance().SEPARATOR;
+							Storage.getInstance().addAutoboxingMethod(incompleteKey + unboxed);
 
-							Storage.addUnboxingMethod(methodName, parameterClassName);
+							codeTemplate = "{ist.meic.pa.Storage.getInstance().updateAutoboxingCounter(\"%s\");}";
+							method.insertAfter(String.format(codeTemplate, incompleteKey + unboxed));
 						}
 					} catch (NotFoundException e) {
 						throw new RuntimeException(e);
@@ -79,12 +75,6 @@ public class CustomTranslator implements Translator {
 		}
 	}
 
-	/**
-	 * Gets the wrapper type.
-	 *
-	 * @param primitiveType the primitive type
-	 * @return the wrapper type
-	 */
 	private String getWrapperType(String primitiveType) {
 		if (primitiveType.equals("int"))
 			return "java.lang.Integer";

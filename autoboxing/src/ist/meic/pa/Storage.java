@@ -2,76 +2,38 @@ package ist.meic.pa;
 
 import java.util.TreeMap;
 
-/**
- * The Class Storage.
- */
 public class Storage {
 	
-	private static String separator = "separador";
+	private static Storage instance = null;
 
-	/** The boxing counters. */
-	private static TreeMap<String, Integer> boxingCounters = new TreeMap<String, Integer>();
+	public final String SEPARATOR = "separador";
 
-	/** The unboxing counters. */
-	private static TreeMap<String, Integer> unboxingCounters = new TreeMap<String, Integer>();
-
-	/**
-	 * Adds the boxing method.
-	 *
-	 * @param methodName the method name
-	 * @param wrapperClass the wrapper class
-	 */
-	public static void addBoxingMethod(String methodName, String wrapperClass) {
-		String key = methodName + separator + wrapperClass;
-		boxingCounters.put(key, new Integer(1));
+	private TreeMap<String, Integer> autoboxingCounters = new TreeMap<String, Integer>();
+	
+	private Storage() {}
+	
+	public static Storage getInstance() {
+		if (instance == null)
+			instance = new Storage();
+		return instance;
 	}
 
-	/**
-	 * Update boxing counter.
-	 *
-	 * @param methodName the method name
-	 */
-	public static void updateBoxingCounter(String methodName) {
-		int currentCounter = boxingCounters.get(methodName);
-		boxingCounters.put(methodName, new Integer(++currentCounter));
+	public void addAutoboxingMethod(String completeKey) {
+		autoboxingCounters.put(completeKey, new Integer(1));
 	}
 
-	/**
-	 * Adds the unboxing method.
-	 *
-	 * @param methodName the method name
-	 * @param wrapperClass the wrapper class
-	 */
-	public static void addUnboxingMethod(String methodName, String wrapperClass) {
-		String key = methodName + separator + wrapperClass;
-		unboxingCounters.put(key, new Integer(1));
+	public void updateAutoboxingCounter(String completeKey) {
+		int currentCounter = autoboxingCounters.get(completeKey);
+		autoboxingCounters.put(completeKey, new Integer(++currentCounter));
 	}
 
-	/**
-	 * Update unboxing counter.
-	 *
-	 * @param methodName the method name
-	 */
-	public static void updateUnboxingCounter(String methodName) {
-		int currentCounter = unboxingCounters.get(methodName);
-		unboxingCounters.put(methodName, new Integer(++currentCounter));
-	}
-
-	/**
-	 * Prints the output.
-	 */
-	public static void printOutput() {
-		for (String methodName : boxingCounters.keySet()) {
-			String[] split = methodName.split(separator);
+	public void printOutput() {
+		for (String methodName : autoboxingCounters.keySet()) {
+			String[] split = methodName.split(SEPARATOR);
 			String method = split[0];
 			String parameterClass = split[1];
-			System.err.println(method + " boxed " + boxingCounters.get(methodName) + " " + parameterClass);
-		}
-		for (String methodName : unboxingCounters.keySet()) {
-			String[] split = methodName.split(separator);
-			String method = split[0];
-			String parameterClass = split[1];
-			System.err.println(method + " unboxed " + unboxingCounters.get(methodName) + " " + parameterClass);
+			String boxing = split[2];
+			System.err.println(method + boxing + autoboxingCounters.get(methodName) + " " + parameterClass);
 		}
 	}
 }
