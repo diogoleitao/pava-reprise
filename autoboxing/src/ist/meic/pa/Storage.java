@@ -28,6 +28,8 @@ public class Storage {
 	}
 
 	public void printOutput() {
+		System.out.println(autoboxingCounters);
+		/*
 		for (String methodName : autoboxingCounters.keySet()) {
 			String[] split = methodName.split(SEPARATOR);
 			String method = split[0];
@@ -35,5 +37,6 @@ public class Storage {
 			String boxing = split[2];
 			System.err.println(method + boxing + autoboxingCounters.get(methodName) + " " + parameterClass);
 		}
+		*/
 	}
 }

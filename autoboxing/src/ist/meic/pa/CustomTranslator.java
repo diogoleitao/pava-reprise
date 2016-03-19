@@ -37,7 +37,7 @@ public class CustomTranslator implements Translator {
 	private void instrumentClass(final CtClass ctClass) throws CannotCompileException {
 		for (final CtMethod method : ctClass.getDeclaredMethods()) {
 			final String methodName = method.getLongName();
-
+			//System.out.println(methodName);
 			method.instrument(new ExprEditor() {
 				@Override
 				public void edit(MethodCall methodCall) throws CannotCompileException {
@@ -49,23 +49,30 @@ public class CustomTranslator implements Translator {
 						String incompleteKey = methodName + Storage.getInstance().SEPARATOR;
 						String boxed = " boxed ";
 						String unboxed = " unboxed ";
-
+						
 						if (autoboxingMethodName.contains("valueOf")) {
 							parameterClassName = getWrapperType(parameterTypes[0].getName());
 							incompleteKey += parameterClassName + Storage.getInstance().SEPARATOR;
-							Storage.getInstance().addAutoboxingMethod(incompleteKey + boxed);
+							//Storage.getInstance().addAutoboxingMethod(incompleteKey + boxed);
 
-							codeTemplate = "{ist.meic.pa.Storage.getInstance().updateAutoboxingCounter(\"%s\");}";
-							method.insertAfter(String.format(codeTemplate, incompleteKey + boxed));
+							codeTemplate = "{ist.meic.pa.Storage.getInstance().addAutoboxingMethod(\"%s\");"
+									+" ist.meic.pa.Storage.getInstance().updateAutoboxingCounter(\"%s\");}";
+							method.insertAfter(String.format(codeTemplate, incompleteKey + boxed, incompleteKey + boxed));
 
 						} else if (autoboxingMethodName.contains("Value")) {
 							String methodCallName = methodCall.getMethodName();
 							parameterClassName = getWrapperType(methodCallName.substring(0, methodCallName.indexOf("Value")));
 							incompleteKey += parameterClassName + Storage.getInstance().SEPARATOR;
-							Storage.getInstance().addAutoboxingMethod(incompleteKey + unboxed);
+							//Storage.getInstance().addAutoboxingMethod(incompleteKey + unboxed);
 
-							codeTemplate = "{ist.meic.pa.Storage.getInstance().updateAutoboxingCounter(\"%s\");}";
-							method.insertAfter(String.format(codeTemplate, incompleteKey + unboxed));
+							codeTemplate = "{ist.meic.pa.Storage.getInstance().addAutoboxingMethod(\"%s\");"
+									+" ist.meic.pa.Storage.getInstance().updateAutoboxingCounter(\"%s\");}";
+							method.insertAfter(String.format(codeTemplate, incompleteKey + unboxed, incompleteKey + unboxed));
+						}
+						
+						if (methodName.contains("main(java.lang.String[])")) {
+							codeTemplate = "{ist.meic.pa.Storage.getInstance().printOutput();}";
+							method.insertAfter(codeTemplate);
 						}
 					} catch (NotFoundException e) {
 						throw new RuntimeException(e);
