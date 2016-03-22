@@ -43,7 +43,11 @@ public class CustomTranslator implements Translator {
 					try {
 						CtClass[] parameterTypes = methodCall.getMethod().getParameterTypes();
 						String parameterClassName = "";
-						String codeTemplate = "";
+						String codeTemplate = 
+								"{" +
+										"$_ = $proceed($$);" +
+										"ist.meic.pa.Storage.updateAutoboxingCounter(\"%s\");" +
+								"}";
 						String autoboxingMethodName = methodCall.getMethod().getLongName();
 						String incompleteKey = methodName + Storage.SEPARATOR;
 						String boxed = " boxed ";
@@ -52,17 +56,13 @@ public class CustomTranslator implements Translator {
 						if (autoboxingMethodName.contains("valueOf")) {
 							parameterClassName = getWrapperType(parameterTypes[0].getName());
 							incompleteKey += parameterClassName + Storage.SEPARATOR;
-
-							codeTemplate = "{ist.meic.pa.Storage.updateAutoboxingCounter(\"%s\");}";
-							method.insertAfter(String.format(codeTemplate, incompleteKey + boxed, incompleteKey + boxed));
+							methodCall.replace(String.format(codeTemplate, incompleteKey + boxed, incompleteKey + boxed));
 
 						} else if (autoboxingMethodName.contains("Value")) {
 							String methodCallName = methodCall.getMethodName();
 							parameterClassName = getWrapperType(methodCallName.substring(0, methodCallName.indexOf("Value")));
 							incompleteKey += parameterClassName + Storage.SEPARATOR;
-
-							codeTemplate = "{ist.meic.pa.Storage.updateAutoboxingCounter(\"%s\");}";
-							method.insertAfter(String.format(codeTemplate, incompleteKey + unboxed, incompleteKey + unboxed));
+							methodCall.replace(String.format(codeTemplate, incompleteKey + unboxed, incompleteKey + unboxed));
 						}
 
 
@@ -71,6 +71,9 @@ public class CustomTranslator implements Translator {
 					}
 				}
 			});
+			
+			if (methodName.contains("main(java.lang.String[])"))
+				method.insertAfter("ist.meic.pa.Storage.printOutput();");
 		}
 	}
 
