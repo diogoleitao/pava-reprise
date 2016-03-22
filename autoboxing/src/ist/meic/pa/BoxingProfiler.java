@@ -21,6 +21,7 @@ public class BoxingProfiler {
 			try {
 				Loader classLoader = new Loader(pool);
 				classLoader.addTranslator(pool, translator);
+				classLoader.delegateLoadingOf("ist.meic.pa.BoxingProfiler");
 
 				try {
 					// CLEAN UP ARGS[]
@@ -32,10 +33,9 @@ public class BoxingProfiler {
 					runnableClass = classLoader.loadClass(args[0]); 
 
 					try {
-						Object instance = runnableClass.newInstance();
-						instance.getClass().getMethod("main", new Class[] { String[].class }).invoke(null, new Object[] { newArgs });
-						//Storage.getInstance().printOutput();
-					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | NoSuchMethodException e) {
+						runnableClass.getMethod("main", new Class[] { String[].class }).invoke(null, new Object[] { newArgs });
+						Storage.printOutput();
+					} catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException e) {
 						System.err.println("Main method could not be invoked from " + args[0] + " class with " + ((newArgs.length == 0) ? "no arguments" : "arguments " + newArgs.toString()) +  ".");
 						return;
 					} catch (InvocationTargetException e) {
