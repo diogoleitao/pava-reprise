@@ -1,4 +1,4 @@
-<project name="BoxingProfiler" basedir="." default="compile">
+<project name="BoxingProfiler" basedir="." default="jar">
 	<property name="src" location="src" />
 	<property name="classes" location="classes" />
 	<property name="jar" location="boxingProfiler.jar" />
