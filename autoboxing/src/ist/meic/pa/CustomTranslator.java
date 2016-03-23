@@ -46,7 +46,7 @@ public class CustomTranslator implements Translator {
 						String codeTemplate = 
 								"{" +
 										"$_ = $proceed($$);" +
-										"ist.meic.pa.Storage.updateAutoboxingCounter(\"%s\");" +
+										"ist.meic.pa.Storage.updateAutoboxingCounter(\"%s\", $$);" +
 								"}";
 						String autoboxingMethodName = methodCall.getMethod().getLongName();
 						String incompleteKey = methodName + Storage.SEPARATOR;
@@ -91,7 +91,7 @@ public class CustomTranslator implements Translator {
 		else if (primitiveType.equals("boolean"))
 			return "java.lang.Booelan";
 		else if (primitiveType.equals("char"))
-			return "java.lang.String";
+			return "java.lang.Character";
 		else if (primitiveType.equals("byte"))
 			return "java.lang.Byte";
 		else
