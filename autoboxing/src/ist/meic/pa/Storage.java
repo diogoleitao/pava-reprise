@@ -8,8 +8,7 @@ public class Storage {
 
 	private static TreeMap<String, Integer> autoboxingCounters = new TreeMap<String, Integer>();
 
-	public static void updateAutoboxingCounter(String completeKey, Object type) {
-		System.out.println(type);
+	public static void updateAutoboxingCounter(String completeKey) {
 		if (!autoboxingCounters.containsKey(completeKey))
 			autoboxingCounters.put(completeKey, new Integer(1));
 		else {
