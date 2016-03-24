@@ -43,10 +43,8 @@ public class CustomTranslator implements Translator {
 					try {
 						CtClass[] parameterTypes = methodCall.getMethod().getParameterTypes();
 						String parameterClassName = "";
-						String codeTemplate = "{" +
-								"$_ = $proceed($$);" +
-								"ist.meic.pa.Storage.updateAutoboxingCounter(\"%s\");"
-												+ "}";
+						String codeTemplate = "{" + "$_ = $proceed($$);"
+								+ "ist.meic.pa.Storage.updateAutoboxingCounter(\"%s\");" + "}";
 						String autoboxingMethodName = methodCall.getMethod().getLongName();
 						String incompleteKey = methodName + Storage.SEPARATOR;
 						String boxed = " boxed ";
