@@ -42,14 +42,21 @@ public class CustomTranslator implements Translator {
 				public void edit(MethodCall methodCall) throws CannotCompileException {
 					try {
 						CtClass[] parameterTypes = methodCall.getMethod().getParameterTypes();
+						
 						String parameterClassName = "";
-						String codeTemplate = "{" + "$_ = $proceed($$);"
-								+ "ist.meic.pa.Storage.updateAutoboxingCounter(\"%s\");" + "}";
+						String codeTemplate =
+							"{" +
+									"$_ = $proceed($$);" +
+									"if (ist.meic.pa.Storage.primitiveType($_, $0)) {" +
+										"ist.meic.pa.Storage.updateAutoboxingCounter(\"%s\");" +
+									"}" +
+							"}";
 						String autoboxingMethodName = methodCall.getMethod().getLongName();
+						
 						String incompleteKey = methodName + Storage.SEPARATOR;
 						String boxed = " boxed ";
 						String unboxed = " unboxed ";
-
+						
 						if (autoboxingMethodName.contains("valueOf")) {
 							parameterClassName = getWrapperType(parameterTypes[0].getName());
 							incompleteKey += parameterClassName + Storage.SEPARATOR;
@@ -88,7 +95,7 @@ public class CustomTranslator implements Translator {
 		else if (primitiveType.equals("short"))
 			return "java.lang.Short";
 		else if (primitiveType.equals("boolean"))
-			return "java.lang.Booelan";
+			return "java.lang.Boolean";
 		else if (primitiveType.equals("char"))
 			return "java.lang.Character";
 		else if (primitiveType.equals("byte"))

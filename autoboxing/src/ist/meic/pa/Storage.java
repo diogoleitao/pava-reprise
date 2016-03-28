@@ -27,4 +27,44 @@ public class Storage {
 		}
 
 	}
+
+	private static boolean primitiveType(String type, String clazz) {
+		return clazz.equalsIgnoreCase(type);
+	}
+
+	public static boolean primitiveType(int i, Object o) {
+		return primitiveType("integer", o.getClass().getSimpleName());
+	}
+
+	public static boolean primitiveType(double d, Object o) {
+		return primitiveType("double", o.getClass().getSimpleName());
+	}
+
+	public static boolean primitiveType(short s, Object o) {
+		return primitiveType("short", o.getClass().getSimpleName());
+	}
+
+	public static boolean primitiveType(float f, Object o) {
+		return primitiveType("float", o.getClass().getSimpleName());
+	}
+
+	public static boolean primitiveType(long l, Object o) {
+		return primitiveType("long", o.getClass().getSimpleName());
+	}
+
+	public static boolean primitiveType(byte b, Object o) {
+		return primitiveType("byte", o.getClass().getSimpleName());
+	}
+
+	public static boolean primitiveType(char c, Object o) {
+		return primitiveType("character", o.getClass().getSimpleName());
+	}
+
+	public static boolean primitiveType(boolean b, Object o) {
+		return primitiveType("boolean", o.getClass().getSimpleName());
+	}
+	
+	public static boolean primitiveType(Object o1, Object o2) {
+		return true;
+	}
 }
