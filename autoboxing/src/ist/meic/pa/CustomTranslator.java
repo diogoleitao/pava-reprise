@@ -11,11 +11,20 @@ import javassist.Translator;
 import javassist.expr.ExprEditor;
 import javassist.expr.MethodCall;
 
+/**
+ *Custom Translator class used to instrument the classes about to be profiled.
+ */
+
 public class CustomTranslator implements Translator {
 
 	@Override
 	public void start(ClassPool pool) throws NotFoundException, CannotCompileException {
 	}
+	
+	/**
+	 * The onLoad method checks if the function being loaded belongs to this project's
+	 * package, or to Javassist's, and, if not, calls the InstrumentClass method on the class.
+	 */
 
 	@Override
 	public void onLoad(ClassPool pool, String ctClass) throws NotFoundException, CannotCompileException {
@@ -33,6 +42,18 @@ public class CustomTranslator implements Translator {
 			}
 		}
 	}
+	
+	/**
+	 * Method that checks the input class for boxing/unboxing operations and instruments
+	 * it if such operations are found.
+	 * If a call to the valueOf() or any of the *Value() methods is found, that call
+	 * is replaced by a block of code containing that same call followed by a call
+	 * to the updateAutoboxingCounter method, if the types are compatible.
+	 * The compatibility is checked with the primitiveType method.
+	 * 
+	 * @param ctClass Class to be instrumented
+	 * @throws CannotCompileException
+	 */
 
 	private void instrumentClass(final CtClass ctClass) throws CannotCompileException {
 		for (final CtMethod method : ctClass.getDeclaredMethods()) {
@@ -79,6 +100,14 @@ public class CustomTranslator implements Translator {
 				method.insertAfter("ist.meic.pa.Storage.printOutput();");
 		}
 	}
+	
+	/**
+	 * Translates the short name of a type, obtained from a boxing operation, to its
+	 * full, long name.
+	 * 
+	 * @param primitiveType
+	 * @return
+	 */
 
 	private String getWrapperType(String primitiveType) {
 		if (primitiveType.equals("int"))
