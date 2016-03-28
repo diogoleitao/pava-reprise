@@ -60,16 +60,13 @@ public class CustomTranslator implements Translator {
 						if (autoboxingMethodName.contains("valueOf")) {
 							parameterClassName = getWrapperType(parameterTypes[0].getName());
 							incompleteKey += parameterClassName + Storage.SEPARATOR;
-							methodCall
-									.replace(String.format(codeTemplate, incompleteKey + boxed, incompleteKey + boxed));
+							methodCall.replace(String.format(codeTemplate, incompleteKey + boxed, incompleteKey + boxed));
 
 						} else if (autoboxingMethodName.contains("Value")) {
 							String methodCallName = methodCall.getMethodName();
-							parameterClassName = getWrapperType(
-									methodCallName.substring(0, methodCallName.indexOf("Value")));
+							parameterClassName = getWrapperType(methodCallName.substring(0, methodCallName.indexOf("Value")));
 							incompleteKey += parameterClassName + Storage.SEPARATOR;
-							methodCall.replace(
-									String.format(codeTemplate, incompleteKey + unboxed, incompleteKey + unboxed));
+							methodCall.replace(String.format(codeTemplate, incompleteKey + unboxed, incompleteKey + unboxed));
 						}
 
 					} catch (NotFoundException e) {

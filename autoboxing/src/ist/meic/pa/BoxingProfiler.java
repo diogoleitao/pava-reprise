@@ -42,7 +42,6 @@ public class BoxingProfiler {
 						return;
 					}
 				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
 					System.err.println("Class " + args[0] + " not found.");
 					return;
 				}
