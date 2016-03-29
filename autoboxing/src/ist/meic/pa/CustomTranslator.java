@@ -24,15 +24,7 @@ public class CustomTranslator implements Translator {
 	 * The onLoad method checks if the function being loaded belongs to this
 	 * project's package, or to Javassist's, and, if not, calls the
 	 * instrumentClass method with that class.
-	 *
-	 * @param pool
-	 *            the pool of classes
-	 * @param ctClass
-	 *            the class being loaded
-	 * @throws NotFoundException
-	 * @throws CannotCompileException
 	 */
-
 	@Override
 	public void onLoad(ClassPool pool, String ctClass) throws NotFoundException, CannotCompileException {
 		CtClass cc = pool.get(ctClass);
@@ -51,19 +43,17 @@ public class CustomTranslator implements Translator {
 	}
 
 	/**
-	 * Method that checks the input class for autoboxing operations and
-	 * instruments it if such operations are found. If a call to the valueOf()
-	 * or any of the *Value() methods is found, that call is replaced by a block
-	 * of code containing that same call followed by a call to the
+	 * Checks the input class for autoboxing operations and instruments it if
+	 * such operations are found. If a call to the valueOf() or any of the
+	 * *Value() methods are found, that call is replaced by a block of code
+	 * containing that same call followed by a call to the
 	 * updateAutoboxingCounter() method, if the types are compatible. The
-	 * compatibility is checked with the checkTypeCompatibility() method. This
-	 * method also looks for the main() method of the instrumented class and
-	 * adds the printOutput() method to it, so that when the input program is
-	 * finished, the information gathered by the profiler is printed.
+	 * compatibility is checked with the checkTypeCompatibility() method.
 	 * 
-	 * @param ctClass
-	 *            Class to be instrumented
-	 * @throws CannotCompileException
+	 * This method also looks for the main() method of the instrumented class
+	 * and adds the printOutput() method to it at the end, so that when the
+	 * input program is finished, the information gathered by the profiler is
+	 * printed.
 	 */
 	private void instrumentClass(CtClass ctClass) throws CannotCompileException {
 		for (CtMethod method : ctClass.getDeclaredMethods()) {
@@ -112,10 +102,6 @@ public class CustomTranslator implements Translator {
 	/**
 	 * Translates the primitive type designation, obtained from an autoboxing
 	 * operation, to its wrapper correspondent.
-	 * 
-	 * @param primitiveType
-	 *            the primitive type
-	 * @return the wrapper type
 	 */
 	private String getWrapperType(String primitiveType) {
 		if (primitiveType.equals("int"))

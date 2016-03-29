@@ -19,9 +19,6 @@ public class Storage {
 	 * If the string "method + parameter class + box/unbox operation" used as
 	 * the TreeMap key is not present, adds an entry with its counter set to 1.
 	 * Otherwise, it just increments the respective counter
-	 *
-	 * @param methodKey
-	 *            the key, built as explained above
 	 */
 	public static void updateAutoboxingCounter(String methodKey) {
 		if (!autoboxingCounters.containsKey(methodKey))
