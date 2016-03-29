@@ -34,7 +34,7 @@
 				<path refid="project-classpath" />
 				<path location="${jar}" />
 			</classpath>
-			<arg value="TestA" />
+			<arg value="SumIntegers" />
 		</java>
 	</target>
 </project>
