@@ -50,6 +50,8 @@ public class CustomTranslator implements Translator {
 	 * is replaced by a block of code containing that same call followed by a call
 	 * to the updateAutoboxingCounter method, if the types are compatible.
 	 * The compatibility is checked with the primitiveType method.
+	 * This method also looks for the main() method of the instrumented class and
+	 * adds the printOutput() method to it.
 	 * 
 	 * @param ctClass Class to be instrumented
 	 * @throws CannotCompileException
