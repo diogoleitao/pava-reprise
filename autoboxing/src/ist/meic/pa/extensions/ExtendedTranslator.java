@@ -1,7 +1,8 @@
-package ist.meic.pa;
+package ist.meic.pa.extensions;
 
 import java.lang.reflect.Modifier;
 
+import ist.meic.pa.Storage;
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;

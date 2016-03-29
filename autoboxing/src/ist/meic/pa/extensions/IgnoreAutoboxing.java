@@ -1,4 +1,4 @@
-package ist.meic.pa;
+package ist.meic.pa.extensions;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
