@@ -1,0 +1,34 @@
+<project name="GenericFunctions" basedir="." default="jar">
+	<property name="src" location="src" />
+	<property name="classes" location="classes" />
+	<property name="jar" location="genericFunctions.jar" />
+
+	<target name="init" description="Creates the 'build' folder.">
+		<mkdir dir="${classes}" />
+	</target>
+
+	<target name="clean" description="Deletes the 'classes' folder and the generated boxingProfiler.jar.">
+		<delete dir="${classes}" />
+		<delete file="${jar}" />
+	</target>
+
+	<target name="compile" depends="clean, init" description="Compiles all classes">
+		<javac includeantruntime="false" srcdir="${src}" destdir="${classes}"/>
+	</target>
+
+	<target name="jar" depends="compile" description="Creates the genericFunctions.jar">
+		<jar destfile="${jar}" basedir="${classes}">
+			<manifest>
+				<attribute name="Main-Class" value="ist.meic.pa.GenericFunctions.GenericFunction" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="run" depends="jar" >
+		<java classname="ist.meic.pa.GenericFunctions.GenericFunction" fork="false" spawn="false">
+			<classpath>
+				<path location="${jar}" />
+			</classpath>
+		</java>
+	</target>
+</project>
