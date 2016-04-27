@@ -23,24 +23,8 @@ public class GenericFunction {
 	public void addBeforeMethod(GFMethod gfm) {
 		befores.add(gfm);
 	}
-	
+
 	public Object call(Object... args) {
 		return null;
-	}
-
-	class GFMethodOO extends GFMethod {
-
-		@Override
-		public Object call() {
-			return call(new Object());
-		}
-	}
-
-	class GFMethodSS extends GFMethod {
-
-		@Override
-		public Object call() {
-			return call(new String());
-		}
 	}
 }
