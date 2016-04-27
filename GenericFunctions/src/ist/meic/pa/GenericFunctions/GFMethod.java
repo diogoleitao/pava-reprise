@@ -1,8 +1,11 @@
 package ist.meic.pa.GenericFunctions;
 
 public class GFMethod {
-
-	public void call() {
+	public Object call() {
+		return null;
 	}
 
+	public Object call(Object... args) {
+		return null;
+	}
 }
