@@ -1,6 +1,7 @@
 package ist.meic.pa.GenericFunctions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class GenericFunction {
 	private String name;
@@ -25,6 +26,7 @@ public class GenericFunction {
 	}
 
 	public Object call(Object... args) {
+		new StandardCombination().computeEffectiveMethod(this.befores, this.methods, this.afters, new ArrayList<Object>(Arrays.asList(args)));
 		return null;
 	}
 }
