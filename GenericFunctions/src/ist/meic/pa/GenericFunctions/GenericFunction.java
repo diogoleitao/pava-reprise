@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public class GenericFunction {
 	private String name;
-	private ArrayList<GFMethod> methods = new ArrayList<GFMethod>();
+	private ArrayList<GFMethod> mainMethods = new ArrayList<GFMethod>();
 	private ArrayList<GFMethod> befores = new ArrayList<GFMethod>();
 	private ArrayList<GFMethod> afters = new ArrayList<GFMethod>();
 
@@ -14,7 +14,7 @@ public class GenericFunction {
 	}
 
 	public void addMethod(GFMethod gfm) {
-		methods.add(gfm);
+		mainMethods.add(gfm);
 	}
 
 	public void addAfterMethod(GFMethod gfm) {
@@ -26,7 +26,15 @@ public class GenericFunction {
 	}
 
 	public Object call(Object... args) {
-		new StandardCombination().computeEffectiveMethod(this.befores, this.methods, this.afters, new ArrayList<Object>(Arrays.asList(args)));
-		return null;
+		EffectiveMethod effectiveMethod = StandardCombination.computeEffectiveMethod(befores, mainMethods, afters, new ArrayList<Object>(Arrays.asList(args)));
+		for (GFMethod before : effectiveMethod.getBefores())
+			before.call(args);
+		
+		Object returnedObject = effectiveMethod.getMainMethod().call(args);
+		
+		for (GFMethod after : effectiveMethod.getAfters())
+			after.call(args);
+		
+		return returnedObject;
 	}
 }
