@@ -67,6 +67,7 @@ public class StandardCombination {
 			classPrecedences.add(clazz);
 			classPrecedences.add(superClass);
 		} else {
+			classPrecedences.add(clazz);
 			getClassPrecedences(superClass);
 		}
 	}
