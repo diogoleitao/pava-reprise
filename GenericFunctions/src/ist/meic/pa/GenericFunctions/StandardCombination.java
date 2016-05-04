@@ -20,24 +20,26 @@ public class StandardCombination {
 		ArrayList<GFMethod> sortedBefores = sortMostToLeast(befores, parameterTypes);
 		ArrayList<GFMethod> sortedMainMethods = sortMostToLeast(mainMethods, parameterTypes);
 		ArrayList<GFMethod> sortedAfters = sortLeastToMost(afters, parameterTypes);
-		
+
 		if (sortedMainMethods.isEmpty())
-			//TODO: change this
-			throw new RuntimeException();
+			throw new IllegalArgumentException("");
 		else
 			return new EffectiveMethod(sortedBefores, sortedMainMethods.get(0), sortedAfters);
 	}
 
 	private static void getClassPrecedences(Class<?> clazz) {
-		Class<?> superClass = clazz.getSuperclass();
 		if (clazz.isPrimitive()) {
+			// TODO: modify this to check the condition properly
 			classPrecedences.add(clazz);
-		} else if (superClass.equals(Object.class)) {
+		} else if (clazz.getSuperclass().equals(Object.class)) {
 			classPrecedences.add(clazz);
-			classPrecedences.add(superClass);
+			classPrecedences.add(clazz.getSuperclass());
+		} else if (clazz.getComponentType() != null) {
+			classPrecedences.add(clazz.getComponentType());
+			getClassPrecedences(clazz.getComponentType().getSuperclass());
 		} else {
 			classPrecedences.add(clazz);
-			getClassPrecedences(superClass);
+			getClassPrecedences(clazz.getSuperclass());
 		}
 	}
 
@@ -74,7 +76,7 @@ public class StandardCombination {
 					Collections.swap(arraysToSort, i, i+1);
 			}
 		}
-		
+
 		ArrayList<GFMethod> sortedMethods = new ArrayList<GFMethod>();
 		for (ArrayList<Class<?>> types : arraysToSort) {
 			for (GFMethod method : methods) {
@@ -85,7 +87,7 @@ public class StandardCombination {
 				}
 			}
 		}
-		
+
 		return sortedMethods;
 	}
 

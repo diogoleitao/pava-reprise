@@ -29,12 +29,12 @@ public class GenericFunction {
 		EffectiveMethod effectiveMethod = StandardCombination.computeEffectiveMethod(befores, mainMethods, afters, new ArrayList<Object>(Arrays.asList(args)));
 		for (GFMethod before : effectiveMethod.getBefores())
 			before.call(args);
-		
+
 		Object returnedObject = effectiveMethod.getMainMethod().call(args);
-		
+
 		for (GFMethod after : effectiveMethod.getAfters())
 			after.call(args);
-		
+
 		return returnedObject;
 	}
 }
