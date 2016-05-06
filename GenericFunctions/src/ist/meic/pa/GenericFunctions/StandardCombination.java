@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
+import ist.meic.pa.tests.Test3;
+
 public class StandardCombination {
 	private static ArrayList<Class<?>> classPrecedences = new ArrayList<Class<?>>();
 
@@ -21,8 +23,8 @@ public class StandardCombination {
 		ArrayList<GFMethod> sortedMainMethods = sortMostToLeast(applicableMethods, parameterTypes);
 		ArrayList<GFMethod> sortedAfters = sortLeastToMost(applicableAfters, parameterTypes);
 
-		return new EffectiveMethod(sortedBefores, sortedMainMethods.get(0), sortedAfters);
-	}
+		return new EffectiveMethod(sortedBefores, sortedMainMethods, sortedAfters);
+		}
 
 	private static void getClassPrecedences(Class<?> clazz) {
 		if (clazz.equals(Object.class)) {
@@ -45,23 +47,19 @@ public class StandardCombination {
 		ArrayList<GFMethod> applicableMethods = gfImplementations;
 
 		for (int i = 0; i < applicableMethods.size(); i++) {
+			GFMethod applicableMethod = applicableMethods.get(i);
 			for (Class<?> argType : callerArgTypes) {
-				GFMethod applicableMethod = applicableMethods.get(i);
 				ArrayList<Class<?>> callImplementationArgTypes = getMethodParameterTypes(applicableMethod);
 
 				getClassPrecedences(argType);
 
 				for (Class<?> c : callImplementationArgTypes) {
-					if (!classPrecedences.contains(c))
+					if (!classPrecedences.contains(c)){
 						applicableMethods.remove(applicableMethod);
-					break;
+						i--;
+						break;
+					}
 				}
-
-				/*
-				 * if (classPrecedences.contains(callImplementationArgTypes)) {
-				 * applicableMethods.remove(applicableMethod); Test3.println(
-				 * "qwerqwer " + applicableMethods); }
-				 */
 
 			}
 			classPrecedences.clear();

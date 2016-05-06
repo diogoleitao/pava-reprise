@@ -36,12 +36,18 @@ public class GenericFunction {
 
 	public Object call(Object... args) {
 		ArrayList<Class<?>> parameterTypes = new ArrayList<Class<?>>();
-		
+
 		for (Object arg : args)
 			parameterTypes.add(arg.getClass());
-		EffectiveMethod effectiveMethod = StandardCombination.computeEffectiveMethod(befores, mainMethods, afters,
+		EffectiveMethod effectiveMethod = StandardCombination.computeEffectiveMethod(new ArrayList<GFMethod>(befores),
+				new ArrayList<GFMethod>(mainMethods), new ArrayList<GFMethod>(afters),
 				new ArrayList<Object>(Arrays.asList(args)));
 		Object returnedObject = null;
+
+		if (effectiveMethod.getMainMethods().getClass().getDeclaredMethods().length == 0)
+			throw new IllegalArgumentException(
+					String.format(EXCEPTION_MESSAGE, getName(), listify(args), listify(args)));
+
 		for (GFMethod before : effectiveMethod.getBefores()) {
 			Method[] declaredMethods = before.getClass().getDeclaredMethods();
 			for (Method method : declaredMethods) {
@@ -50,20 +56,20 @@ public class GenericFunction {
 					try {
 						method.invoke(before, args);
 					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-						
+
 					}
 			}
 			break;
 		}
 
-		for(Method method : effectiveMethod.getMainMethod().getClass().getDeclaredMethods()) {
-			method.setAccessible(true);
-			if (method.getName().equals("call"))
-				try {
-					returnedObject = method.invoke(effectiveMethod.getMainMethod(), args);
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					
-				}
+		Method mainMethod = effectiveMethod.getMainMethods().get(0).getClass().getDeclaredMethods()[0];
+		mainMethod.setAccessible(true);
+		if (mainMethod.getName().equals("call")) {
+			try {
+				returnedObject = mainMethod.invoke(effectiveMethod.getMainMethods().get(0), args);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+
+			}
 		}
 
 		for (GFMethod after : effectiveMethod.getAfters()) {
@@ -74,7 +80,7 @@ public class GenericFunction {
 					try {
 						method.invoke(after, args);
 					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-						
+
 					}
 			}
 			break;
