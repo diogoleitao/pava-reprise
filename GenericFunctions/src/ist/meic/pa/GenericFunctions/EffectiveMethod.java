@@ -4,12 +4,12 @@ import java.util.ArrayList;
 
 public class EffectiveMethod {
 	private ArrayList<GFMethod> befores = new ArrayList<GFMethod>();
-	private GFMethod mainMethod = new GFMethod();
+	private GFMethod mainMethod = null;
 	private ArrayList<GFMethod> afters = new ArrayList<GFMethod>();
 
-	public EffectiveMethod(ArrayList<GFMethod> befores, GFMethod mainMethod, ArrayList<GFMethod> afters) {
+	public EffectiveMethod(ArrayList<GFMethod> befores, GFMethod sortedMainMethod, ArrayList<GFMethod> afters) {
 		this.befores = befores;
-		this.mainMethod = mainMethod;
+		this.mainMethod = sortedMainMethod;
 		this.afters = afters;
 	}
 
