@@ -34,18 +34,18 @@ public class Test3 {
 				return "";
 			}
 		});
-		explain.addAfterMethod(new GFMethod() {
-			void call(Integer entity) {
-				System.out.printf(" (in hexadecimal, is %x)", entity);
-			}
-		});
-		explain.addBeforeMethod(new GFMethod() {
-			void call(Number entity) {
-				System.out.printf("The number ", entity);
-			}
-		});
-		println(explain.call(123));
-		println(explain.call("Hi"));
-		println(explain.call(3.14159));
+//		explain.addAfterMethod(new GFMethod() {
+//			void call(Integer entity) {
+//				System.out.printf(" (in hexadecimal, is %x)", entity);
+//			}
+//		});
+//		explain.addBeforeMethod(new GFMethod() {
+//			void call(Number entity) {
+//				System.out.printf("The number ", entity);
+//			}
+//		});
+		explain.call(123);
+		explain.call("Hi");
+		explain.call(3.14159);
 	}
 }
