@@ -1,5 +1,7 @@
 package ist.meic.pa.GenericFunctions;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -32,17 +34,52 @@ public class GenericFunction {
 	}
 
 	public Object call(Object... args) {
-		Test3.println(args);
+		ArrayList<Class<?>> parameterTypes = new ArrayList<Class<?>>();
+		
+		for (Object arg : args)
+			parameterTypes.add(arg.getClass());
 		EffectiveMethod effectiveMethod = StandardCombination.computeEffectiveMethod(befores, mainMethods, afters,
 				new ArrayList<Object>(Arrays.asList(args)));
-		for (GFMethod before : effectiveMethod.getBefores())
-			before.call(args);
+		Object returnedObject = null;
+		for (GFMethod before : effectiveMethod.getBefores()) {
+			Method[] declaredMethods = before.getClass().getDeclaredMethods();
+			for (Method method : declaredMethods) {
+				method.setAccessible(true);
+				if (method.getName().equals("call"))
+					try {
+						method.invoke(before, args);
+					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+						
+					}
+			}
+			break;
+		}
 
-		Object returnedObject = effectiveMethod.getMainMethod().call(args);
+		for(Method method : effectiveMethod.getMainMethod().getClass().getDeclaredMethods()) {
+			method.setAccessible(true);
+			if (method.getName().equals("call"))
+				try {
+					returnedObject = method.invoke(effectiveMethod.getMainMethod(), args);
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					
+				}
+		}
 
-		for (GFMethod after : effectiveMethod.getAfters())
-			after.call(args);
+		for (GFMethod after : effectiveMethod.getAfters()) {
+			Method[] declaredMethods = after.getClass().getDeclaredMethods();
+			for (Method method : declaredMethods) {
+				method.setAccessible(true);
+				if (method.getName().equals("call"))
+					try {
+						method.invoke(after, args);
+					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+						
+					}
+			}
+			break;
+		}
 
 		return returnedObject;
+
 	}
 }

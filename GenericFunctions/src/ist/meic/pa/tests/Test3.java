@@ -18,7 +18,7 @@ public class Test3 {
 		final GenericFunction explain = new GenericFunction("explain");
 		explain.addMethod(new GFMethod() {
 			Object call(Integer entity) {
-				System.out.printf("%s is a integer", entity);
+				System.out.printf("%s is an integer", entity);
 				return "";
 			}
 		});
@@ -45,7 +45,7 @@ public class Test3 {
 			}
 		});
 		println(explain.call(123));
-		println(explain.call("Hi"));
+		//println(explain.call("Hi"));
 		println(explain.call(3.14159));
 	}
 }
