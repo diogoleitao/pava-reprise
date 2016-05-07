@@ -19,7 +19,7 @@ public class StandardCombination {
 		ArrayList<GFMethod> applicableBefores = removeNonApplicable(befores, parameterTypes);
 		ArrayList<GFMethod> applicableMethods = removeNonApplicable(mainMethods, parameterTypes);
 		ArrayList<GFMethod> applicableAfters = removeNonApplicable(afters, parameterTypes);
-
+		
 		ArrayList<GFMethod> sortedBefores = sortMostToLeast(applicableBefores, parameterTypes);
 		ArrayList<GFMethod> sortedMainMethods = sortMostToLeast(applicableMethods, parameterTypes);
 		ArrayList<GFMethod> sortedAfters = sortLeastToMost(applicableAfters, parameterTypes);
@@ -49,26 +49,36 @@ public class StandardCombination {
 	private static ArrayList<GFMethod> removeNonApplicable(ArrayList<GFMethod> gfImplementations,
 			ArrayList<Class<?>> callerArgTypes) {
 		ArrayList<GFMethod> applicableMethods = gfImplementations;
-
+		
+		//System.out.println(gfImplementations.size());
+		
 		for (int i = 0; i < applicableMethods.size(); i++) {
+			
 			GFMethod applicableMethod = applicableMethods.get(i);
+			
+			//System.out.println(i + " " + applicableMethod);
+			
 			for (Class<?> argType : callerArgTypes) {
 				ArrayList<Class<?>> callImplementationArgTypes = getMethodParameterTypes(applicableMethod);
-
+				
+				//System.out.println("\t" + argType + " " + callerArgTypes.size());
+				
 				getClassPrecedences(argType);
-
+				
 				for (Class<?> c : callImplementationArgTypes) {
+					//System.out.println("\t" + c + " " + callImplementationArgTypes.size());
 					if (!classPrecedences.contains(c)) {
 						applicableMethods.remove(applicableMethod);
-						i--;
+						if(callerArgTypes.size() == 1){
+							i--;
+						}
 						break;
 					}
 				}
-
 			}
 			classPrecedences.clear();
 		}
-
+		
 		return applicableMethods;
 	}
 

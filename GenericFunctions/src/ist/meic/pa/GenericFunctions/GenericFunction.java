@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import ist.meic.pa.tests.Test3;
+import org.omg.PortableServer.ThreadPolicyOperations;
 
 public class GenericFunction {
 	private String name;
@@ -44,6 +44,7 @@ public class GenericFunction {
 				new ArrayList<Object>(Arrays.asList(args)));
 		Object returnedObject = null;
 
+		
 		if (effectiveMethod.getMainMethods().getClass().getDeclaredMethods().length == 0)
 			throw new IllegalArgumentException(
 					String.format(EXCEPTION_MESSAGE, getName(), listify(args), listify(args)));
@@ -67,11 +68,11 @@ public class GenericFunction {
 		if (mainMethod.getName().equals("call")) {
 			try {
 				returnedObject = mainMethod.invoke(effectiveMethod.getMainMethods().get(0), args);
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-
+			} catch (IllegalAccessException | IllegalArgumentException |InvocationTargetException e) {
+				
 			}
 		}
-
+		
 		for (GFMethod after : effectiveMethod.getAfters()) {
 			Method[] declaredMethods = after.getClass().getDeclaredMethods();
 			for (Method method : declaredMethods) {
