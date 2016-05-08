@@ -3,18 +3,11 @@ package ist.meic.pa.tests;
 import java.util.Arrays;
 import java.util.List;
 
+import ist.meic.pa.GenericFunctions.ClassUtils;
 import ist.meic.pa.GenericFunctions.GFMethod;
 import ist.meic.pa.GenericFunctions.GenericFunction;
 
 public class Test2 {
-	public static void println(Object obj) {
-		if (obj instanceof Object[]) {
-			System.out.println(Arrays.deepToString((Object[]) obj));
-		} else {
-			System.out.println(obj);
-		}
-	}
-
 	public static void main(String[] args) {
 		final GenericFunction add = new GenericFunction("add");
 		add.addMethod(new GFMethod() {
@@ -51,10 +44,10 @@ public class Test2 {
 			}
 		});
 
-		println(add.call(new Object[] { 1, 2 }, 3));
-		println(add.call(1, new Object[][] { { 1, 2 }, { 3, 4 } }));
-		println(add.call("12", "34"));
-		println(add.call(new Object[] { "123", "4" }, 5));
-		println(add.call(new Object[] { 1, 2, 3 }, Arrays.asList(4, 5, 6)));
+		ClassUtils.println(add.call(new Object[] { 1, 2 }, 3));
+		ClassUtils.println(add.call(1, new Object[][] { { 1, 2 }, { 3, 4 } }));
+		ClassUtils.println(add.call("12", "34"));
+		ClassUtils.println(add.call(new Object[] { "123", "4" }, 5));
+		ClassUtils.println(add.call(new Object[] { 1, 2, 3 }, Arrays.asList(4, 5, 6)));
 	}
 }

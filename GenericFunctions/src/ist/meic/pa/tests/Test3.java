@@ -1,19 +1,10 @@
 package ist.meic.pa.tests;
 
-import java.util.Arrays;
-
+import ist.meic.pa.GenericFunctions.ClassUtils;
 import ist.meic.pa.GenericFunctions.GFMethod;
 import ist.meic.pa.GenericFunctions.GenericFunction;
 
 public class Test3 {
-	public static void println(Object obj) {
-		if (obj instanceof Object[]) {
-			System.out.println(Arrays.deepToString((Object[]) obj));
-		} else {
-			System.out.println(obj);
-		}
-	}
-
 	public static void main(String[] args) {
 		final GenericFunction explain = new GenericFunction("explain");
 		explain.addMethod(new GFMethod() {
@@ -44,8 +35,8 @@ public class Test3 {
 				System.out.printf("The number ", entity);
 			}
 		});
-		println(explain.call(123));
-		//println(explain.call("Hi"));
-		println(explain.call(3.14159));
+		ClassUtils.println(explain.call(123));
+		ClassUtils.println(explain.call("Hi"));
+		ClassUtils.println(explain.call(3.14159));
 	}
 }
