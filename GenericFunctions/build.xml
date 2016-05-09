@@ -22,7 +22,7 @@
 	</target>
 
 	<target name="run" depends="jar" >
-		<java classname="ist.meic.pa.tests.TestD" fork="false" spawn="false">
+		<java classname="ist.meic.pa.tests.TestA" fork="false" spawn="false">
 			<classpath>
 				<path location="${jar}" />
 			</classpath>

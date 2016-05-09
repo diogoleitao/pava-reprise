@@ -6,13 +6,15 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class StandardCombination {
-	private ArrayList<Class<?>> classPrecedences = new ArrayList<Class<?>>();
+	private ArrayList<ArrayList<Class<?>>> classPrecedences = new ArrayList<ArrayList<Class<?>>>();
 	private ArrayList<Class<?>> interfacesPrecedences = new ArrayList<Class<?>>();
 
 	public EffectiveMethod computeEffectiveMethod(ArrayList<GFMethod> befores, ArrayList<GFMethod> mainMethods, ArrayList<GFMethod> afters, ArrayList<Object> callerArgs) {
 		ArrayList<Class<?>> parameterTypes = new ArrayList<Class<?>>();
-		for (Object arg : callerArgs)
+		for (Object arg : callerArgs) {
 			parameterTypes.add(arg.getClass());
+			classPrecedences.add(new ArrayList<Class<?>>());
+		}
 
 		ArrayList<GFMethod> applicableBefores = removeNonApplicable(befores, parameterTypes);
 		ArrayList<GFMethod> applicableMethods = removeNonApplicable(mainMethods, parameterTypes);
@@ -25,18 +27,17 @@ public class StandardCombination {
 		return new EffectiveMethod(sortedBefores, sortedMainMethods, sortedAfters);
 	}
 
-	private void getClassPrecedences(Class<?> clazz) {
-		if (clazz.isInterface())
+	private void getClassPrecedences(Class<?> clazz, int callerArgIndex) {
+		/*if (clazz.isInterface())
 			getInterfacesPrecedences(clazz);
-		else if (clazz.equals(Object.class))
-			classPrecedences.add(clazz);
+		else */if (clazz.equals(Object.class))
+			classPrecedences.get(callerArgIndex).add(clazz);
 		else if (clazz.getComponentType() != null) {
-			classPrecedences.add(clazz);
-			if (!clazz.getComponentType().equals(Object.class))
-				getClassPrecedences(clazz.getComponentType().getSuperclass());
+			classPrecedences.get(callerArgIndex).add(clazz);
+			getClassPrecedences(clazz.getComponentType(), callerArgIndex);
 		} else {
-			classPrecedences.add(clazz);
-			getClassPrecedences(clazz.getSuperclass());
+			classPrecedences.get(callerArgIndex).add(clazz);
+			getClassPrecedences(clazz.getSuperclass(), callerArgIndex);
 		}
 	}
 
@@ -56,25 +57,30 @@ public class StandardCombination {
 	}
 
 	private ArrayList<GFMethod> removeNonApplicable(ArrayList<GFMethod> gfImplementations, ArrayList<Class<?>> callerArgTypes) {
-		ArrayList<GFMethod> applicableMethods = gfImplementations;
-		for (int i = 0; i < applicableMethods.size(); i++) {
-			GFMethod applicableMethod = applicableMethods.get(i);
-			for (Class<?> argType : callerArgTypes) {
+		ArrayList<GFMethod> applicableMethods = new ArrayList<GFMethod>();
+		for (int i = 0; i < gfImplementations.size(); i++) {
+			System.out.println("i " + i);
+			GFMethod applicableMethod = gfImplementations.get(i);
+			int j;
+			for (j = 0; j < callerArgTypes.size(); j++) {
+				System.out.println("\tj " + j);
 				ArrayList<Class<?>> callImplementationArgTypes = getCallMethodParameterTypes(applicableMethod);
 
-				getClassPrecedences(argType);
-				classPrecedences.addAll(interfacesPrecedences);
+				if (classPrecedences.get(j).isEmpty())
+					getClassPrecedences(callerArgTypes.get(j), j);
 
 				for (Class<?> c : callImplementationArgTypes) {
-					if (!classPrecedences.contains(c)) {
-						applicableMethods.remove(applicableMethod);
+					Utils.println("\t" + c);
+					Utils.println("\t" + classPrecedences.get(j));
+					if (classPrecedences.get(j).contains(c)) {
+						applicableMethods.add(applicableMethod);
 						if (callerArgTypes.size() == 1)
 							i--;
 						break;
 					}
 				}
 			}
-			classPrecedences.clear();
+			classPrecedences.get(--j).clear();
 		}
 
 		return applicableMethods;
@@ -86,7 +92,7 @@ public class StandardCombination {
 			ArrayList<Class<?>> secondElement = arraysToSort.get(i + 1);
 
 			for (int j = callerArgTypes.size() - 1; j > -1; j--) {
-				getClassPrecedences(callerArgTypes.get(j));
+				getClassPrecedences(callerArgTypes.get(j), j);
 				int firstIndex = classPrecedences.indexOf(firstElement.get(j));
 				int secondIndex = classPrecedences.indexOf(secondElement.get(j));
 

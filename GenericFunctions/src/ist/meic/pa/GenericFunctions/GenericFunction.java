@@ -66,7 +66,8 @@ public class GenericFunction {
 			try {
 				returnedObject = mainMethod.invoke(effectiveMethod.getMainMethods().get(0), args);
 			} catch (IllegalAccessException | IllegalArgumentException |InvocationTargetException e) {
-				throw new IllegalArgumentException(String.format(EXCEPTION_MESSAGE, getName(), Utils.listify(args), Utils.getTypesFromArgs(args)));
+				System.out.println("Puff...");
+				//throw new IllegalArgumentException(String.format(EXCEPTION_MESSAGE, getName(), Utils.listify(args), Utils.getTypesFromArgs(args)));
 			}
 		}
 
