@@ -18,14 +18,11 @@
 
 	<target name="jar" depends="compile" description="Creates the genericFunctions.jar">
 		<jar destfile="${jar}" basedir="${classes}">
-			<manifest>
-				<attribute name="Main-Class" value="ist.meic.pa.GenericFunctions.GenericFunction" />
-			</manifest>
 		</jar>
 	</target>
 
 	<target name="run" depends="jar" >
-		<java classname="ist.meic.pa.tests.Test3" fork="false" spawn="false">
+		<java classname="ist.meic.pa.tests.TestA" fork="false" spawn="false">
 			<classpath>
 				<path location="${jar}" />
 			</classpath>

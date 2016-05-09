@@ -7,7 +7,9 @@ import java.util.Arrays;
 
 public class GenericFunction {
 	private String name;
+	private static String BEFORE_EXCEPTION_MESSAGE = "No before methods for generic function %s with args %s of classes %s.";
 	private static String EXCEPTION_MESSAGE = "No methods for generic function %s with args %s of classes %s.";
+	private static String AFTER_EXCEPTION_MESSAGE = "No after methods for generic function %s with args %s of classes %s.";
 	private ArrayList<GFMethod> mainMethods = new ArrayList<GFMethod>();
 	private ArrayList<GFMethod> befores = new ArrayList<GFMethod>();
 	private ArrayList<GFMethod> afters = new ArrayList<GFMethod>();
@@ -33,15 +35,15 @@ public class GenericFunction {
 	}
 
 	public Object call(Object... args) {
+		Object returnedObject = null;
 		ArrayList<Class<?>> parameterTypes = new ArrayList<Class<?>>();
 
 		for (Object arg : args)
 			parameterTypes.add(arg.getClass());
-		EffectiveMethod effectiveMethod = StandardCombination.computeEffectiveMethod(new ArrayList<GFMethod>(befores), new ArrayList<GFMethod>(mainMethods), new ArrayList<GFMethod>(afters), new ArrayList<Object>(Arrays.asList(args)));
-		Object returnedObject = null;
 
+		EffectiveMethod effectiveMethod = StandardCombination.computeEffectiveMethod(new ArrayList<GFMethod>(befores), new ArrayList<GFMethod>(mainMethods), new ArrayList<GFMethod>(afters), new ArrayList<Object>(Arrays.asList(args)));
 		if (effectiveMethod.getMainMethods().getClass().getDeclaredMethods().length == 0)
-			throw new IllegalArgumentException(String.format(EXCEPTION_MESSAGE, getName(), listify(args), listify(args)));
+			throw new IllegalArgumentException(String.format(EXCEPTION_MESSAGE, getName(), Utils.listify(args), Utils.getTypesFromArgs(args)));
 
 		for (GFMethod before : effectiveMethod.getBefores()) {
 			Method[] declaredMethods = before.getClass().getDeclaredMethods();
@@ -51,7 +53,7 @@ public class GenericFunction {
 					try {
 						method.invoke(before, args);
 					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-						//TODO: deal with the exceptions properly
+						throw new IllegalArgumentException(String.format(BEFORE_EXCEPTION_MESSAGE, getName(), Utils.listify(args), Utils.getTypesFromArgs(args)));
 					}
 				}
 			}
@@ -60,11 +62,13 @@ public class GenericFunction {
 
 		Method mainMethod = effectiveMethod.getMainMethods().get(0).getClass().getDeclaredMethods()[0];
 		mainMethod.setAccessible(true);
+		System.out.println(mainMethod);
 		if (mainMethod.getName().equals("call")) {
 			try {
 				returnedObject = mainMethod.invoke(effectiveMethod.getMainMethods().get(0), args);
 			} catch (IllegalAccessException | IllegalArgumentException |InvocationTargetException e) {
-				//TODO: deal with the exceptions properly
+				System.out.println("Puff...");
+				//throw new IllegalArgumentException(String.format(EXCEPTION_MESSAGE, getName(), Utils.listify(args), Utils.getTypesFromArgs(args)));
 			}
 		}
 
@@ -76,20 +80,12 @@ public class GenericFunction {
 					try {
 						method.invoke(after, args);
 					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-						//TODO: deal with the exceptions properly
+						throw new IllegalArgumentException(String.format(AFTER_EXCEPTION_MESSAGE, getName(), Utils.listify(args), Utils.getTypesFromArgs(args)));
 					}
 				}
 			}
 			break;
 		}
 		return returnedObject;
-
-	}
-
-	private Object listify(Object obj) {
-		if (obj instanceof Object[])
-			return Arrays.deepToString((Object[]) obj);
-		else
-			return obj;
 	}
 }
