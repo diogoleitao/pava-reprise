@@ -6,10 +6,10 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class StandardCombination {
-	private static ArrayList<Class<?>> classPrecedences = new ArrayList<Class<?>>();
-	private static ArrayList<Class<?>> interfacesPrecedences = new ArrayList<Class<?>>();
+	private ArrayList<Class<?>> classPrecedences = new ArrayList<Class<?>>();
+	private ArrayList<Class<?>> interfacesPrecedences = new ArrayList<Class<?>>();
 
-	public static EffectiveMethod computeEffectiveMethod(ArrayList<GFMethod> befores, ArrayList<GFMethod> mainMethods, ArrayList<GFMethod> afters, ArrayList<Object> callerArgs) {
+	public EffectiveMethod computeEffectiveMethod(ArrayList<GFMethod> befores, ArrayList<GFMethod> mainMethods, ArrayList<GFMethod> afters, ArrayList<Object> callerArgs) {
 		ArrayList<Class<?>> parameterTypes = new ArrayList<Class<?>>();
 		for (Object arg : callerArgs)
 			parameterTypes.add(arg.getClass());
@@ -25,7 +25,7 @@ public class StandardCombination {
 		return new EffectiveMethod(sortedBefores, sortedMainMethods, sortedAfters);
 	}
 
-	private static void getClassPrecedences(Class<?> clazz) {
+	private void getClassPrecedences(Class<?> clazz) {
 		if (clazz.isInterface())
 			getInterfacesPrecedences(clazz);
 		else if (clazz.equals(Object.class))
@@ -40,7 +40,7 @@ public class StandardCombination {
 		}
 	}
 
-	private static void getInterfacesPrecedences(Class<?> clazz) {
+	private void getInterfacesPrecedences(Class<?> clazz) {
 		interfacesPrecedences.add(clazz);
 		Class<?>[] implementedInterfaces = clazz.getInterfaces();
 		for (int i = 0; i < implementedInterfaces.length; i++) {
@@ -50,12 +50,12 @@ public class StandardCombination {
 		}
 	}
 
-	private static ArrayList<Class<?>> getCallMethodParameterTypes(GFMethod method) {
+	private ArrayList<Class<?>> getCallMethodParameterTypes(GFMethod method) {
 		Method call = method.getClass().getDeclaredMethods()[0];
 		return new ArrayList<Class<?>>(Arrays.asList(call.getParameterTypes()));
 	}
 
-	private static ArrayList<GFMethod> removeNonApplicable(ArrayList<GFMethod> gfImplementations, ArrayList<Class<?>> callerArgTypes) {
+	private ArrayList<GFMethod> removeNonApplicable(ArrayList<GFMethod> gfImplementations, ArrayList<Class<?>> callerArgTypes) {
 		ArrayList<GFMethod> applicableMethods = gfImplementations;
 		for (int i = 0; i < applicableMethods.size(); i++) {
 			GFMethod applicableMethod = applicableMethods.get(i);
@@ -80,7 +80,7 @@ public class StandardCombination {
 		return applicableMethods;
 	}
 
-	private static ArrayList<GFMethod> sort(ArrayList<ArrayList<Class<?>>> arraysToSort, ArrayList<Class<?>> callerArgTypes, ArrayList<GFMethod> methods) {
+	private ArrayList<GFMethod> sort(ArrayList<ArrayList<Class<?>>> arraysToSort, ArrayList<Class<?>> callerArgTypes, ArrayList<GFMethod> methods) {
 		for (int i = 0; i + 1 < arraysToSort.size(); i++) {
 			ArrayList<Class<?>> firstElement = arraysToSort.get(i);
 			ArrayList<Class<?>> secondElement = arraysToSort.get(i + 1);
@@ -109,7 +109,7 @@ public class StandardCombination {
 		return sortedMethods;
 	}
 
-	private static ArrayList<GFMethod> sortMostToLeast(ArrayList<GFMethod> methods, ArrayList<Class<?>> callerArgTypes) {
+	private ArrayList<GFMethod> sortMostToLeast(ArrayList<GFMethod> methods, ArrayList<Class<?>> callerArgTypes) {
 		ArrayList<ArrayList<Class<?>>> toSort = new ArrayList<ArrayList<Class<?>>>();
 
 		for (GFMethod gfMethod : methods)
@@ -118,7 +118,7 @@ public class StandardCombination {
 		return sort(toSort, callerArgTypes, methods);
 	}
 
-	private static ArrayList<GFMethod> sortLeastToMost(ArrayList<GFMethod> methods, ArrayList<Class<?>> callerArgTypes) {
+	private ArrayList<GFMethod> sortLeastToMost(ArrayList<GFMethod> methods, ArrayList<Class<?>> callerArgTypes) {
 		ArrayList<ArrayList<Class<?>>> toSort = new ArrayList<ArrayList<Class<?>>>();
 
 		for (GFMethod gfMethod : methods)
