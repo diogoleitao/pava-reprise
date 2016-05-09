@@ -47,16 +47,16 @@ public class TestA {
 				return add.call(a, Integer.decode(b));
 			}});
 
-//		add.addMethod(new GFMethod() {
-//			Object call(Object[] a, List b) {
-//				return add.call(a, b.toArray());
-//			}});
+		add.addMethod(new GFMethod() {
+			Object call(Object[] a, List b) {
+				return add.call(a, b.toArray());
+			}});
 
 		println(add.call(new Object[] { 1, 2 }, 3));
-//		println(add.call(1, new Object[][] { { 1, 2 }, { 3, 4 } }));
-//		println(add.call("12", "34"));
-//		println(add.call(new Object[] { "123", "4" }, 5));
-//		println(add.call(new Object[] { 1, 2, 3 }, Arrays.asList(4, 5, 6)));
+		println(add.call(1, new Object[][] { { 1, 2 }, { 3, 4 } }));
+		println(add.call("12", "34"));
+		println(add.call(new Object[] { "123", "4" }, 5));
+		println(add.call(new Object[] { 1, 2, 3 }, Arrays.asList(4, 5, 6)));
 
 	}
 
