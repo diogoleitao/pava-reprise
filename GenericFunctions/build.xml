@@ -13,7 +13,7 @@
 	</target>
 
 	<target name="compile" depends="clean, init" description="Compiles all classes">
-		<javac includeantruntime="false" srcdir="${src}" destdir="${classes}"/>
+		<javac includeantruntime="false" srcdir="${src}" destdir="${classes}" />
 	</target>
 
 	<target name="jar" depends="compile" description="Creates the genericFunctions.jar">
@@ -21,8 +21,32 @@
 		</jar>
 	</target>
 
-	<target name="run" depends="jar" >
+	<target name="runA" depends="jar">
 		<java classname="ist.meic.pa.tests.TestA" fork="false" spawn="false">
+			<classpath>
+				<path location="${jar}" />
+			</classpath>
+		</java>
+	</target>
+
+	<target name="runB" depends="jar">
+		<java classname="ist.meic.pa.tests.TestB" fork="false" spawn="false">
+			<classpath>
+				<path location="${jar}" />
+			</classpath>
+		</java>
+	</target>
+
+	<target name="runC" depends="jar">
+		<java classname="ist.meic.pa.tests.TestC" fork="false" spawn="false">
+			<classpath>
+				<path location="${jar}" />
+			</classpath>
+		</java>
+	</target>
+
+	<target name="runD" depends="jar">
+		<java classname="ist.meic.pa.tests.TestD" fork="false" spawn="false">
 			<classpath>
 				<path location="${jar}" />
 			</classpath>
