@@ -30,22 +30,22 @@ public class StandardCombination {
 	}
 
 	private void getClassPrecedences(Class<?> clazz, int callerArgIndex) {
-	 	if (clazz.isInterface()) {
-//			interfacesPrecedences.add(clazz);
-	 		getInterfacesPrecedences(clazz); 
-//	 	} else if (clazz.getInterfaces().length > 0) {
-//	 		classPrecedences.get(callerArgIndex).add(clazz);
-//	 		getInterfacesPrecedences(clazz);	 		
-	 	} else if (clazz.equals(Object.class)) {
+		if (clazz.isInterface()) {
+			//			interfacesPrecedences.add(clazz);
+			getInterfacesPrecedences(clazz); 
+			//	 	} else if (clazz.getInterfaces().length > 0) {
+			//	 		classPrecedences.get(callerArgIndex).add(clazz);
+			//	 		getInterfacesPrecedences(clazz);	 		
+		} else if (clazz.equals(Object.class)) {
 			classPrecedences.get(callerArgIndex).add(clazz);
-	 	} else if (clazz.getComponentType() != null) {
+		} else if (clazz.getComponentType() != null) {
 			classPrecedences.get(callerArgIndex).add(clazz);
 			getClassPrecedences(clazz.getComponentType(), callerArgIndex);
 		} else {
 			classPrecedences.get(callerArgIndex).add(clazz);
 			getClassPrecedences(clazz.getSuperclass(), callerArgIndex);
 		}
-	 	
+
 	}
 
 	private void getInterfacesPrecedences(Class<?> clazz) {
@@ -65,14 +65,14 @@ public class StandardCombination {
 	private ArrayList<GFMethod> removeNonApplicable(ArrayList<GFMethod> gfImplementations, ArrayList<Class<?>> callerArgTypes) {
 		if(gfImplementations.isEmpty())
 			return new ArrayList<GFMethod>();
-		
+
 		ArrayList<GFMethod> applicableMethods = new ArrayList<GFMethod>(gfImplementations);
-		
+
 		for (int c = 0; c < callerArgTypes.size(); c++)		
 			getClassPrecedences(callerArgTypes.get(c), c);
-		
+
 		classPrecedences.add(interfacesPrecedences);
-		
+
 		for (int i = 0; i < applicableMethods.size(); i++) {
 			boolean jumpToNextMethod = false;
 			GFMethod applicableMethod = applicableMethods.get(i);
@@ -81,9 +81,9 @@ public class StandardCombination {
 				ArrayList<Class<?>> callImplementationArgTypes = getCallMethodParameterTypes(applicableMethod);
 
 				for (int k = 0; k < callImplementationArgTypes.size(); k++) {
-					
+
 					k = (j > k) ? j : k;
-					
+
 					if (!(classPrecedences.get(j).contains(callImplementationArgTypes.get(k)))
 							&& applicableMethods.contains(applicableMethod)) {
 						applicableMethods.remove(applicableMethod);
@@ -103,24 +103,25 @@ public class StandardCombination {
 		return applicableMethods;
 	}
 
-	private ArrayList<GFMethod> sort(ArrayList<ArrayList<Class<?>>> arraysToSort, ArrayList<Class<?>> callerArgTypes,
-			ArrayList<GFMethod> methods) {
-		for (int i = 0; i + 1 < arraysToSort.size(); i++) {
-			ArrayList<Class<?>> firstElement = arraysToSort.get(i);
-			ArrayList<Class<?>> secondElement = arraysToSort.get(i + 1);
+	private ArrayList<GFMethod> sort(ArrayList<ArrayList<Class<?>>> applicableMethods, ArrayList<Class<?>> callerArgTypes, ArrayList<GFMethod> methods) {
+		for (int i = 0; i + 1 < applicableMethods.size(); i++) {
+			ArrayList<Class<?>> firstMethodArguments = applicableMethods.get(i);
+			ArrayList<Class<?>> secondMethodArguments = applicableMethods.get(i + 1);
 
 			for (int j = callerArgTypes.size() - 1; j > -1; j--) {
 				getClassPrecedences(callerArgTypes.get(j), j);
-				int firstIndex = classPrecedences.indexOf(firstElement.get(j));
-				int secondIndex = classPrecedences.indexOf(secondElement.get(j));
+				ArrayList<Class<?>> currentClassPrecedences = new ArrayList<Class<?>>(classPrecedences.get(j));				
+
+				int firstIndex = currentClassPrecedences.indexOf(firstMethodArguments.get(j));
+				int secondIndex = currentClassPrecedences.indexOf(secondMethodArguments.get(j));
 
 				if (firstIndex > secondIndex)
-					Collections.swap(arraysToSort, i, i + 1);
+					Collections.swap(applicableMethods, i, i + 1);
 			}
 		}
 
 		ArrayList<GFMethod> sortedMethods = new ArrayList<GFMethod>();
-		for (ArrayList<Class<?>> types : arraysToSort) {
+		for (ArrayList<Class<?>> types : applicableMethods) {
 			for (GFMethod method : methods) {
 				if (types.equals(getCallMethodParameterTypes(method))) {
 					sortedMethods.add(method);
@@ -154,3 +155,4 @@ public class StandardCombination {
 		return sortedMethods;
 	}
 }
+
