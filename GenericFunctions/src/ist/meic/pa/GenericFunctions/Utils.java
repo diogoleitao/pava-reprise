@@ -1,6 +1,5 @@
 package ist.meic.pa.GenericFunctions;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 
 public class Utils {
@@ -26,9 +25,4 @@ public class Utils {
 
 		return listify(argsTypes);
 	}
-
-	public static Object getArgsTypesFromMethod(Method method) {
-		return method.getClass().getTypeParameters();
-	}
-	
 }

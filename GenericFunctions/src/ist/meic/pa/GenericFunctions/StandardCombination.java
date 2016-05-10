@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 
 public class StandardCombination {
@@ -100,34 +101,33 @@ public class StandardCombination {
 	}
 
 	private ArrayList<GFMethod> sort(ArrayList<ArrayList<Class<?>>> applicableMethods, ArrayList<Class<?>> callerArgTypes, ArrayList<GFMethod> methods) {
-		for (int k = 0; k < applicableMethods.size(); k++) {
-			for (int i = 0; i + 1 < applicableMethods.size(); i++) {
-				ArrayList<Class<?>> firstMethodArguments = applicableMethods.get(i);
-				ArrayList<Class<?>> secondMethodArguments = applicableMethods.get(i + 1);
+		HashMap<ArrayList<Class<?>>, GFMethod> methodsToParameterTypes = new HashMap<ArrayList<Class<?>>, GFMethod>();
+		for (GFMethod method : methods) {
+			Method call = method.getClass().getDeclaredMethods()[0];
+			ArrayList<Class<?>> types = new ArrayList<Class<?>>(Arrays.asList(call.getParameterTypes()));
+			methodsToParameterTypes.put(types, method);
+		}
 
-				for (int j = callerArgTypes.size() - 1; j > -1; j--) {
-					computeClassPrecedences(callerArgTypes.get(j), j);
-					ArrayList<Class<?>> currentClassPrecedences = new ArrayList<Class<?>>(classPrecedences.get(j));				
+		for (int i = 0; i < callerArgTypes.size(); i++)
+			computeClassPrecedences(callerArgTypes.get(i), i);
 
-					int firstIndex = currentClassPrecedences.indexOf(firstMethodArguments.get(j));
-					int secondIndex = currentClassPrecedences.indexOf(secondMethodArguments.get(j));
-
-					if (firstIndex > secondIndex)
-						Collections.swap(applicableMethods, i, i + 1);
-				}
-			}
+		ArrayList<SortableMethod> sortableMethods = new ArrayList<SortableMethod>();
+		for (int i = 0; i < applicableMethods.size(); i++) {
+			SortableMethod sortableMethod = new SortableMethod(applicableMethods.get(i), classPrecedences);
+			sortableMethod.setMethodImplementation(methodsToParameterTypes.get(applicableMethods.get(i)));
+			sortableMethods.add(sortableMethod);
 		}
 
 		ArrayList<GFMethod> sortedMethods = new ArrayList<GFMethod>();
-		for (ArrayList<Class<?>> types : applicableMethods) {
-			for (GFMethod method : methods) {
-				if (types.equals(getCallMethodParameterTypes(method))) {
-					sortedMethods.add(method);
-					methods.remove(method);
-					break;
-				}
+		for (int c = 0; c < sortableMethods.size(); c++) {
+			for (int i = 0; i + 1 < sortableMethods.size(); i++) {
+				if (sortableMethods.get(i).getMethodSpecifity() > sortableMethods.get(i+1).getMethodSpecifity())
+					Collections.swap(sortableMethods, i, i + 1);
 			}
 		}
+		
+		for (SortableMethod method : sortableMethods)
+			sortedMethods.add(method.getMethodImplementation());
 		
 		return sortedMethods;
 	}
