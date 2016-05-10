@@ -10,24 +10,25 @@ public class Utils {
 		else
 			System.out.println(obj);
 	}
-	
+
 	public static Object listify(Object obj) {
 		if (obj instanceof Object[])
 			return Arrays.deepToString((Object[]) obj);
 		else
 			return obj;
 	}
-	
+
 	public static Object getTypesFromArgs(Object[] args) {
 		Object[] argsTypes = new Object[args.length];
 
 		for (int i = 0; i < args.length; i++)
 			argsTypes[i] = args[i].getClass();
-		
+
 		return listify(argsTypes);
 	}
-	
-	public static Object getArgsTypesFromMethod(Method method) {				
+
+	public static Object getArgsTypesFromMethod(Method method) {
 		return method.getClass().getTypeParameters();
 	}
+	
 }

@@ -7,9 +7,7 @@ import java.util.Arrays;
 
 public class GenericFunction {
 	private String name;
-//	private static String BEFORE_EXCEPTION_MESSAGE = "No before methods for generic function %s with args %s of classes %s.";
 	private static String EXCEPTION_MESSAGE = "No methods for generic function %s with args %s of classes %s.";
-//	private static String AFTER_EXCEPTION_MESSAGE = "No after methods for generic function %s with args %s of classes %s.";
 	private ArrayList<GFMethod> mainMethods = new ArrayList<GFMethod>();
 	private ArrayList<GFMethod> befores = new ArrayList<GFMethod>();
 	private ArrayList<GFMethod> afters = new ArrayList<GFMethod>();
