@@ -1,6 +1,7 @@
 package ist.meic.pa.GenericFunctions;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,7 +34,10 @@ public class StandardCombination {
 		if (clazz.isInterface()) {
 			interfacesPrecedences.add(clazz);
 			computeInterfacesPrecedences(clazz);
-		} if (clazz.equals(Object.class)) {
+		} else if (Modifier.isAbstract(clazz.getModifiers())) {
+			classPrecedences.get(callerArgIndex).addAll(Arrays.asList(clazz.getInterfaces()));
+		}
+		if (clazz.equals(Object.class)) {
 			classPrecedences.get(callerArgIndex).add(clazz);
 		} else if (clazz.getComponentType() != null) {
 			classPrecedences.get(callerArgIndex).add(clazz);
@@ -83,7 +87,13 @@ public class StandardCombination {
 
 				for (int k = 0; k < callImplementationArgTypes.size(); k++) {
 					k = (j > k) ? j : k;
-					if (!(classPrecedences.get(j).contains(callImplementationArgTypes.get(k))) && applicableMethods.contains(applicableMethod)) {
+					
+					boolean isApplicable = false;
+					for (Class<?> clazz : classPrecedences.get(j)) {
+						if (callImplementationArgTypes.get(k).isAssignableFrom(clazz))
+							isApplicable = true;
+					}
+					if (!isApplicable && applicableMethods.contains(applicableMethod)) {
 						applicableMethods.remove(applicableMethod);
 						jumpToNextMethod = true;
 						i--;
@@ -108,8 +118,8 @@ public class StandardCombination {
 			methodsToParameterTypes.put(types, method);
 		}
 
-		for (int i = 0; i < callerArgTypes.size(); i++)
-			computeClassPrecedences(callerArgTypes.get(i), i);
+		//for (int i = 0; i < callerArgTypes.size(); i++)
+			//computeClassPrecedences(callerArgTypes.get(i), i);
 
 		ArrayList<SortableMethod> sortableMethods = new ArrayList<SortableMethod>();
 		for (int i = 0; i < applicableMethods.size(); i++) {
