@@ -13,7 +13,7 @@ public class Storage {
 
 	public static final String SEPARATOR = "separador";
 
-	private static TreeMap<String, Integer> autoboxingCounters = new TreeMap<String, Integer>();
+	private static TreeMap<String, Integer> autoboxingCounters = new TreeMap<>();
 
 	/**
 	 * If the string "method + parameter class + box/unbox operation" used as
@@ -24,7 +24,7 @@ public class Storage {
 		if (!autoboxingCounters.containsKey(methodKey))
 			autoboxingCounters.put(methodKey, new Integer(1));
 		else {
-			int currentCounter = autoboxingCounters.get(methodKey);
+			int currentCounter = autoboxingCounters.get(methodKey).intValue();
 			autoboxingCounters.put(methodKey, new Integer(++currentCounter));
 		}
 	}

@@ -42,8 +42,6 @@ public class ExtendedTranslator implements Translator {
 				instrumentClass(cc);
 			} catch (CannotCompileException e) {
 				throw new CannotCompileException(e);
-			} catch (ClassNotFoundException e) {
-				throw new RuntimeException(e);
 			}
 		}
 	}
@@ -62,7 +60,7 @@ public class ExtendedTranslator implements Translator {
 	 * input program is finished, the information gathered by the profiler is
 	 * printed.
 	 */
-	private void instrumentClass(CtClass ctClass) throws CannotCompileException, ClassNotFoundException {
+	private void instrumentClass(CtClass ctClass) throws CannotCompileException {
 		for (CtMethod method : ctClass.getDeclaredMethods()) {
 			if (!method.hasAnnotation(IgnoreAutoboxing.class)) {
 				final String methodName = method.getLongName();

@@ -3,9 +3,9 @@ package ist.meic.pa.GenericFunctions;
 import java.util.ArrayList;
 
 public class EffectiveMethod {
-	private ArrayList<GFMethod> befores = new ArrayList<GFMethod>();
-	private ArrayList<GFMethod> mainMethods = new ArrayList<GFMethod>();
-	private ArrayList<GFMethod> afters = new ArrayList<GFMethod>();
+	private ArrayList<GFMethod> befores = new ArrayList<>();
+	private ArrayList<GFMethod> mainMethods = new ArrayList<>();
+	private ArrayList<GFMethod> afters = new ArrayList<>();
 
 	public EffectiveMethod(ArrayList<GFMethod> befores, ArrayList<GFMethod> sortedMainMethods, ArrayList<GFMethod> afters) {
 		this.befores = befores;
@@ -14,14 +14,14 @@ public class EffectiveMethod {
 	}
 
 	public ArrayList<GFMethod> getBefores() {
-		return befores;
+		return this.befores;
 	}
 
 	public ArrayList<GFMethod> getMainMethods() {
-		return mainMethods;
+		return this.mainMethods;
 	}
 
 	public ArrayList<GFMethod> getAfters() {
-		return afters;
+		return this.afters;
 	}
 }

@@ -13,8 +13,7 @@ public class Utils {
 	public static Object listify(Object obj) {
 		if (obj instanceof Object[])
 			return Arrays.deepToString((Object[]) obj);
-		else
-			return obj;
+		return obj;
 	}
 
 	public static Object getTypesFromArgs(Object[] args) {

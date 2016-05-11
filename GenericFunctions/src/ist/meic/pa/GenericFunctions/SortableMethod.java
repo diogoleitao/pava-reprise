@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 public class SortableMethod {
-	private ArrayList<Class<?>> argTypes = new ArrayList<Class<?>>();
+	private ArrayList<Class<?>> argTypes = new ArrayList<>();
 	private GFMethod implementation = null;
 	private int specificity = 0;
 
@@ -14,9 +14,9 @@ public class SortableMethod {
 	}
 
 	private void computeSpecifity(ArrayList<LinkedHashSet<Class<?>>> classPrecedences) {
-		for (int i = 0; i < argTypes.size(); i++) {
-			ArrayList<Class<?>> types = new ArrayList<Class<?>>(classPrecedences.get(i));
-			specificity += types.indexOf(argTypes.get(i));
+		for (int i = 0; i < this.argTypes.size(); i++) {
+			ArrayList<Class<?>> types = new ArrayList<>(classPrecedences.get(i));
+			this.specificity += types.indexOf(this.argTypes.get(i));
 		}
 	}
 

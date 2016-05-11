@@ -12,7 +12,7 @@ public class Shell {
 	public static Object lastResult = null;
 	public static Object[] arrayResult = null;
 	public static Method currentMethod = null;
-	public static HashMap<String, Object> variables = new HashMap<String, Object>();
+	public static HashMap<String, Object> variables = new HashMap<>();
 
 	public static void main(String[] args) {
 		while (true) {
