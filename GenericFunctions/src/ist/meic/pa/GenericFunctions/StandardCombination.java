@@ -31,12 +31,9 @@ public class StandardCombination {
 
 	private void computeClassPrecedences(Class<?> clazz, int callerArgIndex) {
 		if (clazz.isInterface()) {
-			// interfacesPrecedences.add(clazz);
+			interfacesPrecedences.add(clazz);
 			computeInterfacesPrecedences(clazz);
-			// } else if (clazz.getInterfaces().length > 0) {
-			// classPrecedences.get(callerArgIndex).add(clazz);
-			// getInterfacesPrecedences(clazz);
-		} else if (clazz.equals(Object.class)) {
+		} if (clazz.equals(Object.class)) {
 			classPrecedences.get(callerArgIndex).add(clazz);
 		} else if (clazz.getComponentType() != null) {
 			classPrecedences.get(callerArgIndex).add(clazz);
@@ -44,17 +41,15 @@ public class StandardCombination {
 		} else {
 			classPrecedences.get(callerArgIndex).add(clazz);
 			computeClassPrecedences(clazz.getSuperclass(), callerArgIndex);
+		} if (clazz.getInterfaces().length > 0) {
+			computeInterfacesPrecedences(clazz);
 		}
-
 	}
 
 	private void computeInterfacesPrecedences(Class<?> clazz) {
 		Class<?>[] implementedInterfaces = clazz.getInterfaces();
-		for (int i = 0; i < implementedInterfaces.length; i++) {
+		for (int i = 0; i < implementedInterfaces.length; i++)
 			interfacesPrecedences.add(implementedInterfaces[i]);
-			if (implementedInterfaces[i].getInterfaces().length != 0)
-				computeInterfacesPrecedences(implementedInterfaces[i]);
-		}
 	}
 
 	private ArrayList<Class<?>> getCallMethodParameterTypes(GFMethod method) {
@@ -71,7 +66,13 @@ public class StandardCombination {
 		for (int c = 0; c < callerArgTypes.size(); c++)
 			computeClassPrecedences(callerArgTypes.get(c), c);
 
-		classPrecedences.add(interfacesPrecedences);
+		LinkedHashSet<Class<?>> trimmedInterfacesPrecedences = new LinkedHashSet<Class<?>>();
+		for (Class<?> interfaze : interfacesPrecedences) {
+			if (interfaze.getInterfaces().length > 0)
+				trimmedInterfacesPrecedences.add(interfaze);
+		}
+
+		classPrecedences.add(trimmedInterfacesPrecedences);
 
 		for (int i = 0; i < applicableMethods.size(); i++) {
 			boolean jumpToNextMethod = false;
@@ -87,9 +88,8 @@ public class StandardCombination {
 						jumpToNextMethod = true;
 						i--;
 						break;
-					} else {
-						j++;
 					}
+					j++;
 				}
 
 				if (jumpToNextMethod)
@@ -125,10 +125,10 @@ public class StandardCombination {
 					Collections.swap(sortableMethods, i, i + 1);
 			}
 		}
-		
+
 		for (SortableMethod method : sortableMethods)
 			sortedMethods.add(method.getMethodImplementation());
-		
+
 		return sortedMethods;
 	}
 

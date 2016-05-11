@@ -32,7 +32,7 @@ public class GenericFunction {
 		befores.add(gfm);
 	}
 
-	public Object call(Object... args) throws IllegalArgumentException {
+	public Object call(Object... args) {
 		Object returnedObject = null;
 		ArrayList<Class<?>> parameterTypes = new ArrayList<Class<?>>();
 
@@ -48,11 +48,9 @@ public class GenericFunction {
 			for (Method method : declaredMethods) {
 				method.setAccessible(true);
 				if (method.getName().equals("call")) {
-					try {
-						method.invoke(before, args);
-					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-						throw new IllegalArgumentException(String.format(EXCEPTION_MESSAGE, getName(), Utils.listify(args), Utils.getTypesFromArgs(args)));
-					}
+						try {
+							method.invoke(before, args);
+						} catch (IllegalAccessException | InvocationTargetException e) {}
 				}
 			}
 			break;
@@ -63,9 +61,7 @@ public class GenericFunction {
 		if (mainMethod.getName().equals("call")) {
 			try {
 				returnedObject = mainMethod.invoke(effectiveMethod.getMainMethods().get(0), args);
-			} catch (IllegalAccessException | IllegalArgumentException |InvocationTargetException e) {
-				throw new IllegalArgumentException(String.format(EXCEPTION_MESSAGE, getName(), Utils.listify(args), Utils.getTypesFromArgs(args)));
-			}
+			} catch (IllegalAccessException |InvocationTargetException e) {}
 		}
 
 		for (GFMethod after : effectiveMethod.getAfters()) {
@@ -75,9 +71,7 @@ public class GenericFunction {
 				if (method.getName().equals("call")) {
 					try {
 						method.invoke(after, args);
-					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-						throw new IllegalArgumentException(String.format(EXCEPTION_MESSAGE, getName(), Utils.listify(args), Utils.getTypesFromArgs(args)));
-					}
+					} catch (IllegalAccessException | InvocationTargetException e) {}
 				}
 			}
 			break;
