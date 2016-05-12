@@ -3,7 +3,10 @@ package ist.meic.pa.GenericFunctions;
 import java.util.ArrayList;
 
 /**
- * The Class EffectiveMethod.
+ * The Class EffectiveMethod is used to invoke the effective methods,
+ * and all the before and after that is applicable to the call.
+ * The before and after methods are going to be invoked before
+ * and after the primary method, respectively.
  */
 public class EffectiveMethod {
 	
@@ -30,7 +33,7 @@ public class EffectiveMethod {
 	}
 
 	/**
-	 * Gets the befores.
+	 * Gets all the generic functions for the before methods.
 	 *
 	 * @return the befores
 	 */
@@ -39,7 +42,7 @@ public class EffectiveMethod {
 	}
 
 	/**
-	 * Gets the main methods.
+	 *  Gets all the generic functions for the main methods.
 	 *
 	 * @return the main methods
 	 */
@@ -48,7 +51,7 @@ public class EffectiveMethod {
 	}
 
 	/**
-	 * Gets the afters.
+	 *  Gets all the generic functions for the after methods.
 	 *
 	 * @return the afters
 	 */

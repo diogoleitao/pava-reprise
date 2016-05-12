@@ -8,7 +8,7 @@ import java.util.Arrays;
 public class Utils {
 	
 	/**
-	 * Println.
+	 * Prints the object in an Array.
 	 *
 	 * @param obj the obj
 	 */
@@ -20,7 +20,7 @@ public class Utils {
 	}
 
 	/**
-	 * Listify.
+	 * Returns the object in an Array.
 	 *
 	 * @param obj the obj
 	 * @return the object
@@ -32,10 +32,10 @@ public class Utils {
 	}
 
 	/**
-	 * Gets the types from args.
+	 * Gets the type from an invoked call method.
 	 *
-	 * @param args the args
-	 * @return the types from args
+	 * @param args the arguments
+	 * @return the types from arguments
 	 */
 	public static Object getTypesFromArgs(Object[] args) {
 		Object[] argsTypes = new Object[args.length];

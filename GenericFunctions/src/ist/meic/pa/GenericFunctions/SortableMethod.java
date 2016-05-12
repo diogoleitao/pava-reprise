@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 /**
- * The Class SortableMethod.
+ * The Class SortableMethod is used to sort generic functions.
  */
 public class SortableMethod {
 	
-	/** The arg types. */
+	/** The argument types. */
 	private ArrayList<Class<?>> argTypes = new ArrayList<>();
 	
 	/** The implementation. */
@@ -20,8 +20,8 @@ public class SortableMethod {
 	/**
 	 * Instantiates a new sortable method.
 	 *
-	 * @param argTypes the arg types
-	 * @param classPrecedences the class precedences
+	 * @param argTypes the arguments types
+	 * @param classPrecedences the class precedence
 	 */
 	public SortableMethod(ArrayList<Class<?>> argTypes, ArrayList<LinkedHashSet<Class<?>>> classPrecedences) {
 		this.argTypes = argTypes;
@@ -29,7 +29,8 @@ public class SortableMethod {
 	}
 
 	/**
-	 * Compute specifity.
+	 * Computes the specifity of the generic function arguments type 
+	 * using the class's index of precedence of the method that's being invoked.
 	 *
 	 * @param classPrecedences the class precedences
 	 */

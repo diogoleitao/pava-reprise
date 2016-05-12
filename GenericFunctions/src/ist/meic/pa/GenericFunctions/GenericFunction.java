@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * The Class GenericFunction.
+ * The GenericFunction class 
  */
 public class GenericFunction {
 	
@@ -44,7 +44,7 @@ public class GenericFunction {
 	}
 
 	/**
-	 * Adds the method.
+	 * Adds the generic functions of main methods.
 	 *
 	 * @param gfm the gfm
 	 */
@@ -53,7 +53,7 @@ public class GenericFunction {
 	}
 
 	/**
-	 * Adds the after method.
+	 * Adds the generic function of after methods.
 	 *
 	 * @param gfm the gfm
 	 */
@@ -62,7 +62,7 @@ public class GenericFunction {
 	}
 
 	/**
-	 * Adds the before method.
+	 * Adds the generic function of before methods.
 	 *
 	 * @param gfm the gfm
 	 */
@@ -71,7 +71,13 @@ public class GenericFunction {
 	}
 
 	/**
-	 * Call.
+	 * The Call method will compute the effective methods.
+	 * First it will invoke the before methods.
+	 * Second it will invoke the first main method, that will be the primary method.
+	 * And finally it will invoke the after methods.
+	 * All the methods will be invoked using java reflection.
+	 * If there aren't any applicable methods to a particular set of arguments it 
+	 * will throw an IllegalArgumentException.
 	 *
 	 * @param args the args
 	 * @return the object
