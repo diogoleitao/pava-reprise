@@ -9,77 +9,59 @@ import java.util.Arrays;
  * The GenericFunction class 
  */
 public class GenericFunction {
-	
-	/** The name. */
+
+	/** The function's name. */
 	private String name;
-	
+
 	/** The exception message. */
 	private static String EXCEPTION_MESSAGE = "No methods for generic function %s with args %s of classes %s.";
-	
+
 	/** The main methods. */
 	private ArrayList<GFMethod> mainMethods = new ArrayList<>();
-	
-	/** The befores. */
+
+	/** The before methods */
 	private ArrayList<GFMethod> befores = new ArrayList<>();
-	
-	/** The afters. */
+
+	/** The after methods. */
 	private ArrayList<GFMethod> afters = new ArrayList<>();
 
-	/**
-	 * Instantiates a new generic function.
-	 *
-	 * @param name the name
-	 */
 	public GenericFunction(String name) {
 		this.name = name;
 	}
 
-	/**
-	 * Gets the name.
-	 *
-	 * @return the name
-	 */
 	public String getName() {
 		return this.name;
 	}
 
-	/**
-	 * Adds the generic functions of main methods.
-	 *
-	 * @param gfm the gfm
-	 */
 	public void addMethod(GFMethod gfm) {
 		this.mainMethods.add(gfm);
 	}
 
-	/**
-	 * Adds the generic function of after methods.
-	 *
-	 * @param gfm the gfm
-	 */
 	public void addAfterMethod(GFMethod gfm) {
 		this.afters.add(gfm);
 	}
 
-	/**
-	 * Adds the generic function of before methods.
-	 *
-	 * @param gfm the gfm
-	 */
 	public void addBeforeMethod(GFMethod gfm) {
 		this.befores.add(gfm);
 	}
 
 	/**
-	 * The Call method will compute the effective methods.
-	 * First it will invoke the before methods.
-	 * Second it will invoke the first main method, that will be the primary method.
-	 * And finally it will invoke the after methods.
-	 * All the methods will be invoked using java reflection.
-	 * If there aren't any applicable methods to a particular set of arguments it 
-	 * will throw an IllegalArgumentException.
+	 * The call method will trigger the computation of the effective method.
+	 * Once it's done, it will invoke the before methods, then the primary
+	 * method, and finally it will invoke the after methods. All the methods are
+	 * invoked via Java reflection. If there aren't any applicable primary
+	 * methods to a particular set of arguments, an IllegalArgumentException is
+	 * thrown.
+	 * 
+	 * The checked exceptions that Java reflection forces us to deal with are
+	 * not handled (given the absence of code in the catch block), since the
+	 * IllegalAccessException is prevented by making the accessed method public
+	 * and the InvocationTargetException is also avoided, since the receiver
+	 * object has always the same type (same class) and the arguments are
+	 * checked by the StandardCombination class.
 	 *
-	 * @param args the args
+	 * @param args:
+	 *            the call arguments
 	 * @return the object
 	 */
 	public Object call(Object... args) {

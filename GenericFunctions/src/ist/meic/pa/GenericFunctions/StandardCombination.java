@@ -9,29 +9,38 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 
 /**
- * The Class StandardCombination allows to choose the main,
- * before and after methods that are applicable.
+ * The StandardCombination class allows to choose the main, before and after
+ * methods that are applicable to a given call.
  */
 public class StandardCombination {
-	
-	/** The class precedences. */
+
+	/**
+	 * An ArrayList of the class precedences for each argument of the call made.
+	 * The LinkedHashSet prevents storing duplicates and preserves the order of
+	 * insertion.
+	 */
 	private ArrayList<LinkedHashSet<Class<?>>> classPrecedences = new ArrayList<>();
-	
-	/** The interfaces precedences. */
+
+	/** The interface precedences list. */
 	private LinkedHashSet<Class<?>> interfacesPrecedences = new LinkedHashSet<>();
 
 	/**
-	 * This method computes the effective methods with all the generic functions.
-	 * Creates an ArrayList to add the parameter type, and creates a LinkedHashSet
-	 * for each argument to compute the precedences.
-	 * Removes all the generic functions whose arguments are not applicable.
-	 * After removing the non applicable methods, the returned arrays are sorted.
+	 * Computes the effective methods, given all the generic function methods.
+	 * Creates an ArrayList to add the parameter type, and creates a
+	 * LinkedHashSet for each argument to compute the precedences. Removes all
+	 * the generic functions whose arguments are not applicable. After removing
+	 * the non applicable methods, the returned arrays are sorted.
 	 *
-	 * @param befores: all the before methods
-	 * @param mainMethods: all the main methods
-	 * @param afters: all the afters
-	 * @param callerArgs the caller args
-	 * @return the effective method containing all the befores, afters and main methods that are applicable
+	 * @param befores:
+	 *            all the before methods
+	 * @param mainMethods:
+	 *            all the main methods
+	 * @param afters:
+	 *            all the after methods
+	 * @param callerArgs
+	 *            the original call arguments
+	 * @return the effective method containing all the befores, afters and main
+	 *         methods that are applicable
 	 */
 	public EffectiveMethod computeEffectiveMethod(ArrayList<GFMethod> befores, ArrayList<GFMethod> mainMethods, ArrayList<GFMethod> afters, ArrayList<Object> callerArgs) {
 		ArrayList<Class<?>> parameterTypes = new ArrayList<>();
@@ -52,15 +61,16 @@ public class StandardCombination {
 	}
 
 	/**
-	 * This method computes the arguments' class precedences.
-	 * Adds the arguments' class and all of the super classes to the Precedences'
-	 * data structure.
-	 * If the class is abstract, it will add all the interfaces in the data structure.
-	 * If the the class of the argument implements interfaces it calls the method 
-	 * to compute precedences' interface.
+	 * This method computes the arguments' class precedences. Adds the
+	 * arguments' class and all of the super classes to the Precedences' data
+	 * structure. If the class is abstract, it will add all the interfaces in
+	 * the data structure. If the the class of the argument implements
+	 * interfaces it calls the method to compute precedences' interface.
 	 *
-	 * @param clazz the class of the argument called
-	 * @param callerArgIndex the caller arguments index
+	 * @param clazz:
+	 *            the class of the argument called
+	 * @param callerArgIndex:
+	 *            the caller arguments index
 	 */
 	private void computeClassPrecedences(Class<?> clazz, int callerArgIndex) {
 		if (clazz.isInterface()) {
@@ -69,7 +79,7 @@ public class StandardCombination {
 		} else if (Modifier.isAbstract(clazz.getModifiers())) {
 			this.classPrecedences.get(callerArgIndex).addAll(Arrays.asList(clazz.getInterfaces()));
 		}
-		
+
 		if (clazz.equals(Object.class)) {
 			this.classPrecedences.get(callerArgIndex).add(clazz);
 		} else if (clazz.getComponentType() != null) {
@@ -84,9 +94,12 @@ public class StandardCombination {
 	}
 
 	/**
-	 * This method computes the precedences' interfaces once. // TODO
+	 * This method computes the interface precedences for a given class. This
+	 * only contemplates first level interfaces, that is, interfaces implemented
+	 * by an interface are not saved.
 	 *
-	 * @param clazz the clazz
+	 * @param clazz:
+	 *            the class from which the interfaces are retrieved
 	 */
 	private void computeInterfacesPrecedences(Class<?> clazz) {
 		Class<?>[] implementedInterfaces = clazz.getInterfaces();
@@ -95,10 +108,11 @@ public class StandardCombination {
 	}
 
 	/**
-	 * Gets the call method parameter types.
+	 * Returns the call method parameter types, given a GFMethod instance
 	 *
-	 * @param method the method
-	 * @return the call method parameter types
+	 * @param method:
+	 *            the GFMethod instance
+	 * @return the parameter types of call method
 	 */
 	private ArrayList<Class<?>> getCallMethodParameterTypes(GFMethod method) {
 		Method call = method.getClass().getDeclaredMethods()[0];
@@ -106,14 +120,17 @@ public class StandardCombination {
 	}
 
 	/**
-	 * This method computes the class precedences of the caller's argument type, 
-	 * and removes all the generic functions that are not assignable, which means,
-	 * removes all the generic functions that don't have the arguments in the class 
-	 * precedence of the call that was made.
+	 * Computes the class precedences for the caller's argument type, and
+	 * removes all the generic functions that are not assignable, that is,
+	 * removes all the generic functions that don't have the arguments in the
+	 * class's precedences of the call that was made.
 	 *
-	 * @param gfImplementations the generic function implementations
-	 * @param callerArgTypes the caller arguments types
-	 * @return the array list
+	 * @param gfImplementations:
+	 *            the generic function implementations
+	 * @param callerArgTypes:
+	 *            the types of the caller's arguments
+	 * @return an ArrayList containing all the applicable methods (either
+	 *         before, main or after)
 	 */
 	private ArrayList<GFMethod> removeNonApplicable(ArrayList<GFMethod> gfImplementations, ArrayList<Class<?>> callerArgTypes) {
 		if (gfImplementations.isEmpty())
@@ -158,10 +175,12 @@ public class StandardCombination {
 
 	/**
 	 * This method orders the applicable methods depending on their specifity,
-	 * that is computed in the SortableMethod class.
+	 * which is calculated in its corresponding SortableMethod instance.
 	 *
-	 * @param applicableMethods the applicable methods
-	 * @param methods the methods
+	 * @param applicableMethods:
+	 *            the applicable methods
+	 * @param methods:
+	 *            a full list of all the existing implementations
 	 * @return the array list
 	 */
 	private ArrayList<GFMethod> sort(ArrayList<ArrayList<Class<?>>> applicableMethods, ArrayList<GFMethod> methods) {
@@ -194,16 +213,17 @@ public class StandardCombination {
 	}
 
 	/**
-	 * This method sorts the methods from most to least specific
-	 * to compute the correct order for the before and main methods.
+	 * Sorts the methods from most to least specific to compute the correct
+	 * order for the before and main methods.
 	 *
-	 * @param methods the methods
-	 * @return the array list
+	 * @param methods:
+	 *            the methods to be sorted
+	 * @return an ArrayList of sorted methods
 	 */
 	private ArrayList<GFMethod> sortMostToLeast(ArrayList<GFMethod> methods) {
 		if(methods.isEmpty())
 			return new ArrayList<>();
-		
+
 		ArrayList<ArrayList<Class<?>>> toSort = new ArrayList<>();
 
 		for (GFMethod gfMethod : methods)
@@ -213,16 +233,17 @@ public class StandardCombination {
 	}
 
 	/**
-	 * This method sorts the methods from least to more specific
-	 * to compute the correct order for the afters methods.
+	 * Sorts the methods from least to most specific to compute the correct
+	 * order for the afters methods.
 	 *
-	 * @param methods the methods
-	 * @return the array list
+	 * @param methods:
+	 *            the methods to be sorted
+	 * @return an ArrayList of sorted methods
 	 */
 	private ArrayList<GFMethod> sortLeastToMost(ArrayList<GFMethod> methods) {
 		if(methods.isEmpty())
 			return new ArrayList<>();
-		
+
 		ArrayList<ArrayList<Class<?>>> toSort = new ArrayList<>();
 
 		for (GFMethod gfMethod : methods)
