@@ -2,7 +2,16 @@ package ist.meic.pa.GenericFunctions;
 
 import java.util.Arrays;
 
+/**
+ * The Class Utils.
+ */
 public class Utils {
+	
+	/**
+	 * Println.
+	 *
+	 * @param obj the obj
+	 */
 	public static void println(Object obj) {
 		if (obj instanceof Object[])
 			System.out.println(Arrays.deepToString((Object[]) obj));
@@ -10,12 +19,24 @@ public class Utils {
 			System.out.println(obj);
 	}
 
+	/**
+	 * Listify.
+	 *
+	 * @param obj the obj
+	 * @return the object
+	 */
 	public static Object listify(Object obj) {
 		if (obj instanceof Object[])
 			return Arrays.deepToString((Object[]) obj);
 		return obj;
 	}
 
+	/**
+	 * Gets the types from args.
+	 *
+	 * @param args the args
+	 * @return the types from args
+	 */
 	public static Object getTypesFromArgs(Object[] args) {
 		Object[] argsTypes = new Object[args.length];
 

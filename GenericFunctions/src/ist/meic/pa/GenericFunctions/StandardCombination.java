@@ -1,16 +1,33 @@
 package ist.meic.pa.GenericFunctions;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 
+/**
+ * The Class StandardCombination.
+ */
 public class StandardCombination {
+	
+	/** The class precedences. */
 	private ArrayList<LinkedHashSet<Class<?>>> classPrecedences = new ArrayList<>();
+	
+	/** The interfaces precedences. */
 	private LinkedHashSet<Class<?>> interfacesPrecedences = new LinkedHashSet<>();
 
+	/**
+	 * Compute effective method.
+	 *
+	 * @param befores the befores
+	 * @param mainMethods the main methods
+	 * @param afters the afters
+	 * @param callerArgs the caller args
+	 * @return the effective method
+	 */
 	public EffectiveMethod computeEffectiveMethod(ArrayList<GFMethod> befores, ArrayList<GFMethod> mainMethods, ArrayList<GFMethod> afters, ArrayList<Object> callerArgs) {
 		ArrayList<Class<?>> parameterTypes = new ArrayList<>();
 		for (Object arg : callerArgs) {
@@ -22,14 +39,27 @@ public class StandardCombination {
 		ArrayList<GFMethod> applicableMethods = removeNonApplicable(mainMethods, parameterTypes);
 		ArrayList<GFMethod> applicableAfters = removeNonApplicable(afters, parameterTypes);
 
-		ArrayList<GFMethod> sortedBefores = sortMostToLeast(applicableBefores, parameterTypes);
-		ArrayList<GFMethod> sortedMainMethods = sortMostToLeast(applicableMethods, parameterTypes);
-		ArrayList<GFMethod> sortedAfters = sortLeastToMost(applicableAfters, parameterTypes);
+		ArrayList<GFMethod> sortedBefores = sortMostToLeast(applicableBefores);
+		ArrayList<GFMethod> sortedMainMethods = sortMostToLeast(applicableMethods);
+		ArrayList<GFMethod> sortedAfters = sortLeastToMost(applicableAfters);
 
 		return new EffectiveMethod(sortedBefores, sortedMainMethods, sortedAfters);
 	}
-	
+
+	/**
+	 * Compute class precedences.
+	 *
+	 * @param clazz the clazz
+	 * @param callerArgIndex the caller arg index
+	 */
 	private void computeClassPrecedences(Class<?> clazz, int callerArgIndex) {
+		if (clazz.isInterface()) {
+			this.interfacesPrecedences.add(clazz);
+			computeInterfacesPrecedences(clazz);
+		} else if (Modifier.isAbstract(clazz.getModifiers())) {
+			this.classPrecedences.get(callerArgIndex).addAll(Arrays.asList(clazz.getInterfaces()));
+		}
+
 		if (clazz.equals(Object.class)) {
 			this.classPrecedences.get(callerArgIndex).add(clazz);
 		} else if (clazz.getComponentType() != null) {
@@ -40,21 +70,38 @@ public class StandardCombination {
 			computeClassPrecedences(clazz.getSuperclass(), callerArgIndex);
 		} if (clazz.getInterfaces().length > 0) {
 			computeInterfacesPrecedences(clazz);
-			computeClassPrecedences(clazz.getSuperclass(), callerArgIndex);
 		}
 	}
 
+	/**
+	 * Compute interfaces precedences.
+	 *
+	 * @param clazz the clazz
+	 */
 	private void computeInterfacesPrecedences(Class<?> clazz) {
 		Class<?>[] implementedInterfaces = clazz.getInterfaces();
 		for (int i = 0; i < implementedInterfaces.length; i++)
 			this.interfacesPrecedences.add(implementedInterfaces[i]);
 	}
 
+	/**
+	 * Gets the call method parameter types.
+	 *
+	 * @param method the method
+	 * @return the call method parameter types
+	 */
 	private ArrayList<Class<?>> getCallMethodParameterTypes(GFMethod method) {
 		Method call = method.getClass().getDeclaredMethods()[0];
 		return new ArrayList<>(Arrays.asList(call.getParameterTypes()));
 	}
 
+	/**
+	 * Removes the non applicable.
+	 *
+	 * @param gfImplementations the gf implementations
+	 * @param callerArgTypes the caller arg types
+	 * @return the array list
+	 */
 	private ArrayList<GFMethod> removeNonApplicable(ArrayList<GFMethod> gfImplementations, ArrayList<Class<?>> callerArgTypes) {
 		if (gfImplementations.isEmpty())
 			return new ArrayList<>();
@@ -71,18 +118,23 @@ public class StandardCombination {
 		}
 
 		this.classPrecedences.add(trimmedInterfacesPrecedences);
-		//Utils.println(classPrecedences);
 
 		for (int i = 0; i < applicableMethods.size(); i++) {
 			boolean jumpToNextMethod = false;
 			GFMethod applicableMethod = applicableMethods.get(i);
-			int j;
-			for (j = 0; j < callerArgTypes.size(); j++) {
+			for (int j = 0; j < callerArgTypes.size(); j++) {
 				ArrayList<Class<?>> callImplementationArgTypes = getCallMethodParameterTypes(applicableMethod);
 
 				for (int k = 0; k < callImplementationArgTypes.size(); k++) {
 					k = (j > k) ? j : k;
-					if (!(this.classPrecedences.get(j).contains(callImplementationArgTypes.get(k))) && applicableMethods.contains(applicableMethod)) {
+
+					boolean isApplicable = false;
+					for (Class<?> clazz : this.classPrecedences.get(j)) {
+						if (callImplementationArgTypes.get(k).isAssignableFrom(clazz))
+							isApplicable = true;
+					}
+
+					if (!isApplicable && applicableMethods.contains(applicableMethod)) {
 						applicableMethods.remove(applicableMethod);
 						jumpToNextMethod = true;
 						i--;
@@ -99,16 +151,20 @@ public class StandardCombination {
 		return applicableMethods;
 	}
 
-	private ArrayList<GFMethod> sort(ArrayList<ArrayList<Class<?>>> applicableMethods, ArrayList<Class<?>> callerArgTypes, ArrayList<GFMethod> methods) {
+	/**
+	 * Sort.
+	 *
+	 * @param applicableMethods the applicable methods
+	 * @param methods the methods
+	 * @return the array list
+	 */
+	private ArrayList<GFMethod> sort(ArrayList<ArrayList<Class<?>>> applicableMethods, ArrayList<GFMethod> methods) {
 		HashMap<ArrayList<Class<?>>, GFMethod> methodsToParameterTypes = new HashMap<>();
 		for (GFMethod method : methods) {
 			Method call = method.getClass().getDeclaredMethods()[0];
 			ArrayList<Class<?>> types = new ArrayList<>(Arrays.asList(call.getParameterTypes()));
 			methodsToParameterTypes.put(types, method);
 		}
-
-		for (int i = 0; i < callerArgTypes.size(); i++)
-			computeClassPrecedences(callerArgTypes.get(i), i);
 
 		ArrayList<SortableMethod> sortableMethods = new ArrayList<>();
 		for (int i = 0; i < applicableMethods.size(); i++) {
@@ -131,22 +187,34 @@ public class StandardCombination {
 		return sortedMethods;
 	}
 
-	private ArrayList<GFMethod> sortMostToLeast(ArrayList<GFMethod> methods, ArrayList<Class<?>> callerArgTypes) {
+	/**
+	 * Sort most to least.
+	 *
+	 * @param methods the methods
+	 * @return the array list
+	 */
+	private ArrayList<GFMethod> sortMostToLeast(ArrayList<GFMethod> methods) {
 		ArrayList<ArrayList<Class<?>>> toSort = new ArrayList<>();
 
 		for (GFMethod gfMethod : methods)
 			toSort.add(getCallMethodParameterTypes(gfMethod));
 
-		return sort(toSort, callerArgTypes, methods);
+		return sort(toSort, methods);
 	}
 
-	private ArrayList<GFMethod> sortLeastToMost(ArrayList<GFMethod> methods, ArrayList<Class<?>> callerArgTypes) {
+	/**
+	 * Sort least to most.
+	 *
+	 * @param methods the methods
+	 * @return the array list
+	 */
+	private ArrayList<GFMethod> sortLeastToMost(ArrayList<GFMethod> methods) {
 		ArrayList<ArrayList<Class<?>>> toSort = new ArrayList<>();
 
 		for (GFMethod gfMethod : methods)
 			toSort.add(getCallMethodParameterTypes(gfMethod));
 
-		ArrayList<GFMethod> sortedMethods = sort(toSort, callerArgTypes, methods);
+		ArrayList<GFMethod> sortedMethods = sort(toSort, methods);
 		Collections.reverse(sortedMethods);
 
 		return sortedMethods;

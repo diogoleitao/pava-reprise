@@ -5,33 +5,77 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * The Class GenericFunction.
+ */
 public class GenericFunction {
+	
+	/** The name. */
 	private String name;
-	private static String EXCEPTION_MESSAGE = "No methods for generic function %s with args %s of classes %s."; //$NON-NLS-1$
+	
+	/** The exception message. */
+	private static String EXCEPTION_MESSAGE = "No methods for generic function %s with args %s of classes %s.";
+	
+	/** The main methods. */
 	private ArrayList<GFMethod> mainMethods = new ArrayList<>();
+	
+	/** The befores. */
 	private ArrayList<GFMethod> befores = new ArrayList<>();
+	
+	/** The afters. */
 	private ArrayList<GFMethod> afters = new ArrayList<>();
 
+	/**
+	 * Instantiates a new generic function.
+	 *
+	 * @param name the name
+	 */
 	public GenericFunction(String name) {
 		this.name = name;
 	}
 
+	/**
+	 * Gets the name.
+	 *
+	 * @return the name
+	 */
 	public String getName() {
 		return this.name;
 	}
 
+	/**
+	 * Adds the method.
+	 *
+	 * @param gfm the gfm
+	 */
 	public void addMethod(GFMethod gfm) {
 		this.mainMethods.add(gfm);
 	}
 
+	/**
+	 * Adds the after method.
+	 *
+	 * @param gfm the gfm
+	 */
 	public void addAfterMethod(GFMethod gfm) {
 		this.afters.add(gfm);
 	}
 
+	/**
+	 * Adds the before method.
+	 *
+	 * @param gfm the gfm
+	 */
 	public void addBeforeMethod(GFMethod gfm) {
 		this.befores.add(gfm);
 	}
 
+	/**
+	 * Call.
+	 *
+	 * @param args the args
+	 * @return the object
+	 */
 	public Object call(Object... args) {
 		Object returnedObject = null;
 		ArrayList<Class<?>> parameterTypes = new ArrayList<>();
@@ -47,10 +91,10 @@ public class GenericFunction {
 			Method[] declaredMethods = before.getClass().getDeclaredMethods();
 			for (Method method : declaredMethods) {
 				method.setAccessible(true);
-				if (method.getName().equals("call")) { //$NON-NLS-1$
-						try {
-							method.invoke(before, args);
-						} catch (IllegalAccessException | InvocationTargetException e) {}
+				if (method.getName().equals("call")) {
+					try {
+						method.invoke(before, args);
+					} catch (IllegalAccessException | InvocationTargetException e) {}
 				}
 			}
 			break;
@@ -58,7 +102,7 @@ public class GenericFunction {
 
 		Method mainMethod = effectiveMethod.getMainMethods().get(0).getClass().getDeclaredMethods()[0];
 		mainMethod.setAccessible(true);
-		if (mainMethod.getName().equals("call")) { //$NON-NLS-1$
+		if (mainMethod.getName().equals("call")) {
 			try {
 				returnedObject = mainMethod.invoke(effectiveMethod.getMainMethods().get(0), args);
 			} catch (IllegalAccessException |InvocationTargetException e) {}
@@ -68,7 +112,7 @@ public class GenericFunction {
 			Method[] declaredMethods = after.getClass().getDeclaredMethods();
 			for (Method method : declaredMethods) {
 				method.setAccessible(true);
-				if (method.getName().equals("call")) { //$NON-NLS-1$
+				if (method.getName().equals("call")) {
 					try {
 						method.invoke(after, args);
 					} catch (IllegalAccessException | InvocationTargetException e) {}
